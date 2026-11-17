@@ -1,0 +1,7 @@
+# Textdateien überall mit LF: Die Skripte vergleichen Bytes, damit unveränderte Daten in keinem Commit erscheinen.
+* text=auto eol=lf
+*.woff2 binary
+*.webp binary
+*.png binary
+*.jpg binary
+*.bat text eol=crlf

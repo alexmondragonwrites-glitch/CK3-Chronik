@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="robots" content="noindex">
+<title>Musterblatt · CK3-Chronik</title>
+<meta name="description" content="Musterblatt des Erscheinungsbilds „Handschrift“: alle Bausteine der CK3-Chronik mit Blindtext.">
+<link rel="icon" href="assets/zeichen.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/handschrift.css">
+<script src="assets/musterblatt.js" defer></script>
+</head>
+<body>
+<a class="hs-sprung" href="#inhalt">Zum Inhalt</a>
+<header class="hs-kopf">
+  <div class="hs-kopf-innen">
+    <a class="hs-marke" href="./">CK3-Chronik</a>
+    <nav aria-label="Abschnitte"><a href="#farben">Farben</a><a href="#textarten">Textarten</a><a href="#formen">Formen</a><a href="#register">Register</a></nav>
+  </div>
+  <div class="hs-leiste" aria-hidden="true"></div>
+</header>
+
+<main id="inhalt">
+  <section class="hs-titelblatt" aria-labelledby="titel">
+    <p class="hs-oben">Erscheinungsbild · Handschrift</p>
+    <div class="hs-vierpass" aria-hidden="true"></div>
+    <h1 id="titel">Musterblatt</h1>
+    <p class="hs-unter">Alle Bausteine der Chronik, gefüllt mit Blindtext</p>
+    <p class="hs-zeile">Kein Teil einer Partie</p>
+  </section>
+
+  <p class="hs-hinweis">Dieses Blatt zeigt, wie die Chronik aussieht: Pergament, rote Rubriken, Schmuckinitialen und Randleisten. Der lateinische Text ist Blindtext und erzählt nichts; Namen, Daten und Zahlen sind Platzhalter.</p>
+
+  <section class="hs-abschnitt" id="farben" aria-labelledby="farben-titel">
+    <h2 id="farben-titel"><span class="hs-nr">I</span> Farben und Ornament</h2>
+    <div class="hs-leiste" aria-hidden="true"></div>
+    <p>Jeder Lauf trägt die Farbe seines Hauses (<code>data-farbe</code>) und ein Ornament (<code>data-stil</code>). Die Farbe färbt den Einband oben und unten, die Verweise, jede zweite Initiale und die Blätter der Randleiste im Tagebuch. Die Rubriken bleiben rot.</p>
+    <p id="farbwahl" class="hs-farbwahl" hidden>Farbe des Hauses:
+      <button type="button" data-farbe="">Blau</button>
+      <button type="button" data-farbe="rot">Rot</button>
+      <button type="button" data-farbe="gruen">Grün</button>
+      <button type="button" data-farbe="purpur">Purpur</button>
+      <button type="button" data-farbe="schwarz">Schwarz</button>
+      <button type="button" data-farbe="gold">Gold</button>
+    </p>
+    <p>Ein <a href="#textarten">Verweis im Text</a> trägt die Farbe des Hauses. Hell und dunkel folgen der Einstellung des Geräts.</p>
+    <div class="hs-vierpass hs-schluss" aria-hidden="true"></div>
+  </section>
+
+  <section class="hs-abschnitt" id="textarten" aria-labelledby="textarten-titel">
+    <h2 id="textarten-titel"><span class="hs-nr">II</span> Bücher, Kapitel und Textarten</h2>
+    <div class="hs-leiste" aria-hidden="true"></div>
+
+    <section class="hs-buch" id="buch-muster" aria-labelledby="buch-muster-titel">
+      <header class="hs-buch-kopf">
+        <p class="hs-buch-nr">Erstes Buch</p>
+        <h3 id="buch-muster-titel">Name der Spielfigur</h3>
+        <p class="hs-buch-zeit">Platzhalter: Herrschaft vom ersten bis zum letzten Spieldatum</p>
+      </header>
+
+      <article class="hs-kapitel" id="kapitel-muster" aria-labelledby="kapitel-muster-titel">
+        <header class="hs-kapitel-kopf">
+          <p class="hs-kapitel-nr">Kapitel I</p>
+          <h4 id="kapitel-muster-titel">Titel des Kapitels</h4>
+          <p class="hs-kapitel-zeit">Platzhalter: von Spieldatum bis Spieldatum · Tag der Aufnahme</p>
+          <p class="hs-kapitel-einschnitt">Schließt mit dem Einschnitt, den der Spieler bestätigt hat</p>
+          <div class="hs-leiste" aria-hidden="true"></div>
+        </header>
+
+        <div class="hs-bericht">
+          <span class="hs-etikett">Belegt</span>
+          <div class="hs-kennzahlen">
+            <div class="hs-kennzahl"><b>000</b><span>Platzhalter für eine Kennzahl mit Spieldatum</span></div>
+            <div class="hs-kennzahl"><b>00,0</b><span>Platzhalter für eine zweite Kennzahl</span></div>
+            <div class="hs-kennzahl"><b>Titel</b><span>Platzhalter für einen Rang oder Titel</span></div>
+          </div>
+          <h5>Zeitachse</h5>
+          <ol class="hs-zeitachse">
+            <li><span class="hs-zeitpunkt">Spieldatum</span><span>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</span></li>
+            <li><span class="hs-zeitpunkt">zwischen zwei Aufnahmen</span><span>Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</span></li>
+            <li class="hs-einschnitt"><span class="hs-zeitpunkt">Spieldatum</span><span>Ut enim ad minim veniam: der Einschnitt des Kapitels.</span></li>
+          </ol>
+          <p>Der Bericht nennt, was die Aufnahmen belegen, mit Spieldatum und Quelle <a class="hs-q" href="#q1" aria-label="Quelle Q1">Q1</a>. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+          <p class="hs-quelle">Quellenvermerk: Platzhalter für Aufnahme, Spieldatum und Tag der Aufnahme.</p>
+        </div>
+
+        <aside class="hs-randnotiz">
+          <span class="hs-etikett">Abgeleitet</span>
+          <p>Eine Randnotiz hält fest, was aus den Aufnahmen geschlossen ist. Auf breiten Schirmen steht sie als Glosse im Rand.</p>
+        </aside>
+
+        <div class="hs-tagebuch">
+          <span class="hs-etikett">Tagebuch</span>
+          <section class="hs-eintrag">
+            <h5 class="hs-rubrik">Datumszeile des ersten Eintrags</h5>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+            <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.</p>
+          </section>
+          <section class="hs-eintrag">
+            <h5 class="hs-rubrik">Datumszeile des zweiten Eintrags</h5>
+            <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit.</p>
+          </section>
+          <section class="hs-eintrag">
+            <h5 class="hs-rubrik">Datumszeile des dritten Eintrags</h5>
+            <p>Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur. At vero eos et accusamus et iusto odio dignissimos ducimus.</p>
+          </section>
+        </div>
+      </article>
+    </section>
+    <div class="hs-vierpass hs-schluss" aria-hidden="true"></div>
+  </section>
+
+  <section class="hs-abschnitt" id="formen" aria-labelledby="formen-titel">
+    <h2 id="formen-titel"><span class="hs-nr">III</span> Formen des Tagebuchs</h2>
+    <div class="hs-leiste" aria-hidden="true"></div>
+    <div class="hs-tagebuch">
+      <span class="hs-etikett">Tagebuch</span>
+      <section class="hs-eintrag hs-eintrag--schlicht">
+        <h5 class="hs-rubrik">Ein Brief</h5>
+        <div class="hs-brief">
+          <p class="hs-anrede">Anrede des Briefes,</p>
+          <p>lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+          <p class="hs-gruss">Gruß und Name</p>
+        </div>
+      </section>
+      <section class="hs-eintrag hs-eintrag--schlicht">
+        <h5 class="hs-rubrik">Eine Liste</h5>
+        <ul class="hs-liste">
+          <li>Lorem ipsum dolor sit amet</li>
+          <li>Consectetur adipiscing elit</li>
+          <li>Sed do eiusmod tempor incididunt</li>
+        </ul>
+      </section>
+      <section class="hs-eintrag hs-eintrag--schlicht">
+        <h5 class="hs-rubrik">Abschrift einer Urkunde</h5>
+        <div class="hs-urkunde">
+          <p>In nomine lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.</p>
+        </div>
+      </section>
+      <section class="hs-eintrag hs-eintrag--schlicht">
+        <h5 class="hs-rubrik">Ein Gebet</h5>
+        <p class="hs-gebet">Lorem ipsum dolor sit amet,<br>consectetur adipiscing elit,<br>sed do eiusmod tempor.</p>
+      </section>
+      <section class="hs-eintrag hs-eintrag--schlicht">
+        <h5 class="hs-rubrik">Eine Rechnung</h5>
+        <table class="hs-rechnung">
+          <caption>Platzhalter für eine Aufstellung</caption>
+          <tbody>
+            <tr><td>Erster Posten</td><td>00,0</td></tr>
+            <tr><td>Zweiter Posten</td><td>00,0</td></tr>
+            <tr class="hs-summe"><td>Summe</td><td>00,0</td></tr>
+          </tbody>
+        </table>
+      </section>
+    </div>
+    <div class="hs-kanon">
+      <span class="hs-etikett">Figurenkanon</span>
+      <p>So steht das Dossier des Spielers auf der Seite, sobald es vorliegt.</p>
+      <dl class="hs-steckbrief">
+        <dt>Name</dt><dd>Platzhalter</dd>
+        <dt>Haus</dt><dd>Platzhalter</dd>
+        <dt>Kultur und Glaube</dt><dd>Platzhalter</dd>
+      </dl>
+    </div>
+    <div class="hs-vierpass hs-schluss" aria-hidden="true"></div>
+  </section>
+
+  <section class="hs-abschnitt" id="register" aria-labelledby="register-titel">
+    <h2 id="register-titel"><span class="hs-nr">IV</span> Register und Quellen</h2>
+    <div class="hs-leiste" aria-hidden="true"></div>
+    <div class="hs-tabelle-rahmen"><table class="hs-register">
+      <thead><tr><th scope="col">Spieldatum</th><th scope="col">Aufnahme</th><th scope="col">Art</th><th scope="col">Ereignis</th><th scope="col">Quelle</th></tr></thead>
+      <tbody>
+        <tr><td class="hs-zeit">Spieldatum</td><td class="hs-zeit">Tag</td><td class="hs-art">Belegt</td><td><strong>Titel des Eintrags.</strong> Lorem ipsum dolor sit amet.</td><td><a class="hs-q" href="#q1">Q1</a></td></tr>
+        <tr><td class="hs-zeit">zwischen zwei Aufnahmen</td><td class="hs-zeit">Tag</td><td class="hs-art">Abgeleitet</td><td><strong>Titel des Eintrags.</strong> Consectetur adipiscing elit.</td><td><a class="hs-q" href="#q1">Q1</a></td></tr>
+      </tbody>
+    </table></div>
+    <ol class="hs-quellen">
+      <li id="q1"><b>Q1</b>Platzhalter für eine Quelle: Aufnahmen des Paradox-Monitors oder eine Angabe des Spielers.</li>
+    </ol>
+    <div class="hs-vierpass hs-schluss" aria-hidden="true"></div>
+  </section>
+</main>
+
+<footer class="hs-fuss">
+  <div class="hs-leiste" aria-hidden="true"></div>
+  <div class="hs-fuss-innen">
+    <p><a href="./">CK3-Chronik</a> · Musterblatt des Erscheinungsbilds.</p>
+    <p>Eine private Fan-Chronik, unabhängig von Paradox Interactive. Crusader Kings ist eine Marke von Paradox Interactive AB.</p>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,22 @@
+{
+  "id": "erster-lauf",
+  "name": "Erster Lauf",
+  "name_status": "Arbeitstitel, bis der Spieler den Namen des Laufs bestätigt",
+  "game": "Crusader Kings III",
+  "game_version": "1.21 „Florin“",
+  "dlc": [
+    "Silk & Silver"
+  ],
+  "status": "laufend",
+  "started": "2026-11-17",
+  "description": "Chronik des ersten Laufs: die Hauschronik der von Silberfurt, erzählt im Tagebuch der Spielfigur.",
+  "erzaehlweise": "Tagebuch der Spielfigur; je Spielfigur ein Buch, Kapitel fortlaufend",
+  "spielfigur": {
+    "name": "Joshua von Silberfurt",
+    "kanon": "lore/joshua-von-silberfurt.md"
+  },
+  "buecher": [],
+  "monitor": {
+    "world_id": "ck3:a2be71f2-d985-4ba1-b9d7-05841d0295fc"
+  }
+}

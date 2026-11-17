@@ -1,0 +1,392 @@
+/* CK3-Chronik · Erscheinungsbild „Handschrift“: die Hauschronik als mittelalterliche Handschrift.
+   Pergament, braunschwarze Tinte, rote Rubriken, Schmuckinitialen, Randleisten (scripts/ornamente.py).
+   Farben als Variablen, hell und dunkel; Schriften lokal (SIL OFL, assets/fonts/), keine fremden Server.
+   Je Lauf: data-farbe (Farbe des Hauses) und data-stil (Ornament) an <html>.
+   Wer hier Farben ändert, lässt danach `node scripts/kontrast.mjs` laufen (WCAG AA). */
+
+@font-face { font-family: "Texturina"; src: url("fonts/texturina.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: swap; }
+@font-face { font-family: "EB Garamond"; src: url("fonts/eb-garamond.woff2") format("woff2"); font-weight: 400 800; font-style: normal; font-display: swap; }
+@font-face { font-family: "EB Garamond"; src: url("fonts/eb-garamond-italic.woff2") format("woff2"); font-weight: 400 800; font-style: italic; font-display: swap; }
+
+:root {
+  --hs-papier: #efe3c6;          /* Pergament */
+  --hs-papier-fleck: #dfd1b3;    /* dunkelste Stelle der Pergamentwolken (nur für die Kontrastprüfung) */
+  --hs-papier-2: #f7f0dc;        /* Bericht, Titelblatt */
+  --hs-papier-3: #e6d5ac;        /* Tagebuch, getönt */
+  --hs-tinte: #2a1c10;           /* Tinte, Braunschwarz */
+  --hs-tinte-blass: #574330;
+  --hs-rubrum: #9c1f17;          /* Rubriken: Überschriften, Datumszeilen, Initialen */
+  --hs-gold: #a8842c;            /* Linien, Rahmen, Ranken (Schmuck) */
+  --hs-gold-schrift: #6f5210;    /* Gold für kleine Schrift */
+  --hs-blau: #23407a;            /* Lapis: zweite Farbe der Initialen */
+  --hs-haus: #23407a;            /* Farbe des Laufs (data-farbe): Verweise, jede zweite Initiale, Blätter */
+  --hs-einband: #1f3566;         /* Kopf und Fuß: der Einband */
+  --hs-einband-schrift: #f4ead2;
+  --hs-einband-zier: #d9bc6f;
+  --hs-initiale-grund: #f3e6c0;  /* Feld hinter den Schmuckinitialen */
+  --hs-linie: rgba(168, 132, 44, 0.5);
+  --hs-schatten: 0 1px 2px rgba(42, 28, 16, 0.12);
+  --hs-pergament: url("pergament-hell.png");
+  --hs-rahmen: url("rahmen-hell.svg");
+  --hs-ranke: url("ranke.svg");                           /* Ornament des Laufs (data-stil) */
+  --hs-ranke-knospen: url("ranke-knospen.svg");
+  --hs-ranke-s: url("ranke-senkrecht.svg");
+  --hs-ranke-knospen-s: url("ranke-knospen-senkrecht.svg");
+  --hs-titel: "Texturina", "EB Garamond", Georgia, serif;
+  --hs-text: "EB Garamond", Georgia, "Times New Roman", serif;
+  --hs-mass: 44rem;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --hs-papier: #1c1712;        /* Pergament bei Kerzenlicht */
+    --hs-papier-fleck: #2a251e;  /* hellste Stelle der Pergamentwolken */
+    --hs-papier-2: #241e17;
+    --hs-papier-3: #2c2419;
+    --hs-tinte: #ecdfc4;
+    --hs-tinte-blass: #c9b693;
+    --hs-rubrum: #ee9079;
+    --hs-gold: #cba95a;
+    --hs-gold-schrift: #d7b96c;
+    --hs-blau: #a3bdf0;
+    --hs-haus: #a3bdf0;
+    --hs-einband: #152340;
+    --hs-einband-schrift: #efe4c9;
+    --hs-einband-zier: #cba95a;
+    --hs-initiale-grund: #33291b;
+    --hs-linie: rgba(203, 169, 90, 0.42);
+    --hs-schatten: 0 1px 2px rgba(0, 0, 0, 0.5);
+    --hs-pergament: url("pergament-dunkel.png");
+    --hs-rahmen: url("rahmen-dunkel.svg");
+  }
+}
+
+/* Farben je Lauf nach den Tinkturen der Wappen. Blau ist die Vorgabe. */
+:root[data-farbe="rot"] { --hs-haus: #7d1d2a; --hs-einband: #6e1a20; }
+:root[data-farbe="gruen"] { --hs-haus: #1f5a35; --hs-einband: #1c4a2c; }
+:root[data-farbe="purpur"] { --hs-haus: #6a1f55; --hs-einband: #55194a; }
+:root[data-farbe="schwarz"] { --hs-haus: #33302c; --hs-einband: #2b2723; }
+:root[data-farbe="gold"] { --hs-haus: #6f5210; --hs-einband: #6b4f12; --hs-einband-schrift: #f8efd8; --hs-einband-zier: #f0dfae; }
+@media (prefers-color-scheme: dark) {
+  :root[data-farbe="rot"] { --hs-haus: #f0a0a4; --hs-einband: #4a1418; }
+  :root[data-farbe="gruen"] { --hs-haus: #93cf9f; --hs-einband: #14301e; }
+  :root[data-farbe="purpur"] { --hs-haus: #dba3cf; --hs-einband: #3a1433; }
+  :root[data-farbe="schwarz"] { --hs-haus: #cfc8bb; --hs-einband: #0f0d0b; }
+  :root[data-farbe="gold"] { --hs-haus: #dcc078; --hs-einband: #4a370e; --hs-einband-schrift: #efe4c9; --hs-einband-zier: #e3c97f; }
+}
+
+/* Ornament je Lauf. „ranke“ ist die Vorgabe; ein weiterer Stil stellt hier die vier Masken um. */
+:root[data-stil="ranke"] {
+  --hs-ranke: url("ranke.svg");
+  --hs-ranke-knospen: url("ranke-knospen.svg");
+  --hs-ranke-s: url("ranke-senkrecht.svg");
+  --hs-ranke-knospen-s: url("ranke-knospen-senkrecht.svg");
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--hs-papier) var(--hs-pergament) 0 0 / 640px 640px;
+  color: var(--hs-tinte);
+  font: 400 1.125rem/1.62 var(--hs-text);
+  font-variant-numeric: oldstyle-nums proportional-nums;
+  overflow-wrap: break-word;
+}
+a { color: var(--hs-haus); text-decoration-thickness: 1px; text-underline-offset: 0.18em; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 2px solid var(--hs-haus); outline-offset: 3px; }
+img { max-width: 100%; height: auto; }
+h1, h2, h3, h4, h5 { text-wrap: balance; }
+
+.hs-sprung {
+  position: absolute; left: 1rem; top: -4rem; z-index: 2; padding: 0.5rem 0.9rem;
+  background: var(--hs-papier-2); color: var(--hs-tinte); border: 1px solid var(--hs-gold);
+}
+.hs-sprung:focus { top: 0.6rem; }
+
+/* Randleiste: Blattranke aus zwei Masken, der Stiel in Gold, Blätter und Beeren in Rot */
+.hs-leiste { position: relative; height: 16px; }
+.hs-leiste::before, .hs-leiste::after {
+  content: ""; position: absolute; inset: 0;
+  -webkit-mask: var(--hs-ranke) center / 48px 16px round no-repeat;
+  mask: var(--hs-ranke) center / 48px 16px round no-repeat;
+}
+.hs-leiste::before { background: var(--hs-gold); }
+.hs-leiste::after { background: var(--hs-rubrum); -webkit-mask-image: var(--hs-ranke-knospen); mask-image: var(--hs-ranke-knospen); }
+
+.hs-vierpass {
+  width: 4.4rem; aspect-ratio: 1; margin: 0 auto; background: var(--hs-gold);
+  -webkit-mask: url("vierpass.svg") center / contain no-repeat;
+  mask: url("vierpass.svg") center / contain no-repeat;
+}
+.hs-schluss { width: 1.5rem; margin: 1.8rem auto 0; }
+
+/* Kopf und Fuß: der Einband */
+.hs-kopf { background: var(--hs-einband); color: var(--hs-einband-schrift); }
+.hs-kopf-innen {
+  max-width: 64rem; margin: 0 auto; padding: 0.65rem 1rem 0.55rem;
+  display: flex; flex-wrap: wrap; gap: 0.3rem 1.4rem; align-items: baseline; justify-content: space-between;
+}
+.hs-marke { font: 600 1.4rem/1.2 var(--hs-titel); color: inherit; text-decoration: none; }
+.hs-kopf nav { display: flex; flex-wrap: wrap; gap: 0.15rem 1.1rem; font-size: 1rem; }
+.hs-kopf nav a { color: inherit; text-decoration: none; border-bottom: 1px solid transparent; padding: 0.15rem 0; }
+.hs-kopf nav a:hover, .hs-kopf nav a[aria-current] { border-bottom-color: currentColor; }
+.hs-kopf :focus-visible, .hs-fuss :focus-visible { outline-color: currentColor; }
+.hs-kopf .hs-leiste::before, .hs-fuss .hs-leiste::before { background: var(--hs-einband-zier); }
+.hs-kopf .hs-leiste::after, .hs-fuss .hs-leiste::after { background: var(--hs-einband-schrift); opacity: 0.8; }
+.hs-fuss { margin-top: 4rem; background: var(--hs-einband); color: var(--hs-einband-schrift); font-size: 1rem; }
+.hs-fuss-innen { max-width: var(--hs-mass); margin: 0 auto; padding: 1.1rem 1rem 1.6rem; }
+.hs-fuss a { color: inherit; }
+.hs-fuss p { margin: 0.3rem 0; }
+
+/* Satzspiegel und Titelblatt */
+main { max-width: var(--hs-mass); margin: 0 auto; padding: 0 1rem; }
+.hs-titelblatt {
+  text-align: center; margin: 2.4rem 0 2rem; padding: 1.9rem 1rem 1.8rem;
+  border: 22px solid transparent; border-image: var(--hs-rahmen) 24 / 22px round;
+  background: var(--hs-papier-2); background-clip: padding-box;
+}
+.hs-titelblatt .hs-oben {
+  font: 600 1rem/1.3 var(--hs-text); letter-spacing: 0.22em; color: var(--hs-rubrum);
+  margin: 0 0 1.1rem;
+}
+.hs-titelblatt h1 { font: 700 clamp(2.4rem, 9vw, 4.3rem)/1.04 var(--hs-titel); margin: 0.8rem 0 0.5rem; }
+.hs-titelblatt h1::first-letter, .hs-buch-kopf h3::first-letter, .hs-kapitel-kopf h4::first-letter { color: var(--hs-rubrum); }
+.hs-titelblatt .hs-unter { font-style: italic; font-size: 1.25rem; color: var(--hs-tinte-blass); margin: 0.2rem 0 1rem; }
+.hs-titelblatt .hs-zeile {
+  font: 600 1rem/1.5 var(--hs-text); letter-spacing: 0.16em; color: var(--hs-gold-schrift);
+  margin: 1rem 0 0;
+}
+
+.hs-hinweis { font-size: 1.02rem; color: var(--hs-tinte-blass); text-align: center; font-style: italic; margin: 0 auto 1.2rem; max-width: 36rem; }
+.hs-aufnahmen { font-size: 1rem; color: var(--hs-tinte-blass); text-align: center; margin: 0 0 2.2rem; }
+.hs-leer { text-align: center; font-style: italic; color: var(--hs-tinte-blass); margin: 1.4rem auto; max-width: 34rem; }
+
+/* Inhaltsverzeichnis */
+.hs-inhalt { border-top: 3px double var(--hs-gold); border-bottom: 3px double var(--hs-gold); padding: 1rem 0 0.9rem; margin: 0 0 2.8rem; }
+.hs-inhalt h2 {
+  margin: 0 0 0.6rem; font: 600 1rem/1.3 var(--hs-text); letter-spacing: 0.24em;
+  color: var(--hs-rubrum); text-align: center;
+}
+.hs-inhalt ol { list-style: none; margin: 0; padding: 0; columns: 2 14rem; column-gap: 2rem; }
+.hs-inhalt li { break-inside: avoid; padding: 0.15rem 0; }
+.hs-inhalt .hs-nr { display: inline-block; min-width: 2.4rem; font-weight: 600; letter-spacing: 0.06em; color: var(--hs-gold-schrift); font-variant-numeric: lining-nums; }
+.hs-inhalt .hs-inhalt-kapitel { columns: auto; margin: 0.1rem 0 0.15rem 2.4rem; font-size: 1rem; font-style: italic; }
+
+/* Abschnitte: die Überschrift ist eine Rubrik */
+.hs-abschnitt { margin: 0 0 3.2rem; scroll-margin-top: 1rem; }
+.hs-abschnitt > h2 { font: 700 clamp(1.7rem, 5.4vw, 2.3rem)/1.15 var(--hs-titel); color: var(--hs-rubrum); text-align: center; margin: 0 0 0.45rem; }
+.hs-abschnitt > h2 .hs-nr {
+  display: block; font: 600 0.95rem/1.4 var(--hs-text); letter-spacing: 0.3em; color: var(--hs-gold-schrift);
+  margin: 0 0 0.1rem; font-variant-numeric: lining-nums;
+}
+.hs-abschnitt > .hs-leiste { max-width: 12rem; margin: 0 auto 1.7rem; }
+.hs-abschnitt h3 { font: 600 1.45rem/1.25 var(--hs-titel); margin: 1.8rem 0 0.6rem; }
+
+/* Textarten */
+.hs-etikett {
+  display: inline-block; font: 600 0.9rem/1 var(--hs-text); letter-spacing: 0.18em;
+  padding: 0.26rem 0.55rem 0.34rem; border: 1px solid currentColor; border-radius: 2px; margin: 0 0 0.8rem;
+}
+.hs-bericht {
+  background: var(--hs-papier-2); border-top: 3px double var(--hs-gold); border-bottom: 3px double var(--hs-gold);
+  padding: 1.2rem 1.3rem 1rem; margin: 1.4rem 0; box-shadow: var(--hs-schatten);
+}
+.hs-bericht .hs-etikett { color: var(--hs-gold-schrift); }
+.hs-bericht h5 { margin: 1.2rem 0 0.5rem; font: 600 1.2rem/1.25 var(--hs-titel); }
+.hs-quelle { font-style: italic; font-size: 1rem; color: var(--hs-tinte-blass); margin: 0.9rem 0 0; }
+.hs-kanon {
+  background: var(--hs-papier-2); border-top: 3px double var(--hs-haus); border-bottom: 3px double var(--hs-haus);
+  padding: 1.2rem 1.3rem 1rem; margin: 1.4rem 0; box-shadow: var(--hs-schatten);
+}
+.hs-kanon .hs-etikett, .hs-kanon h3 { color: var(--hs-haus); }
+.hs-kanon h3 { margin-top: 0.4rem; font-size: 1.7rem; }
+.hs-kanon h4 { margin: 1.6rem 0 0.5rem; font: 600 1.3rem/1.25 var(--hs-titel); }
+.hs-motto { margin: 1.1rem 0 1.3rem; text-align: center; font-size: 1.25rem; color: var(--hs-rubrum); }
+
+/* Tagebuch: getöntes Pergament, links die Randleiste, am Anfang die Schmuckinitiale */
+.hs-tagebuch {
+  position: relative; background: var(--hs-papier-3); padding: 1.5rem 1.4rem 1.2rem 2.7rem; margin: 1.6rem 0;
+  border: 1px solid var(--hs-linie); box-shadow: var(--hs-schatten); text-align: justify; hyphens: auto;
+}
+.hs-tagebuch::before, .hs-tagebuch::after {
+  content: ""; position: absolute; left: 0.75rem; top: 1rem; bottom: 1rem; width: 16px;
+  -webkit-mask: var(--hs-ranke-s) center top / 16px 48px no-repeat round;
+  mask: var(--hs-ranke-s) center top / 16px 48px no-repeat round;
+}
+.hs-tagebuch::before { background: var(--hs-gold); }
+.hs-tagebuch::after { background: var(--hs-haus); -webkit-mask-image: var(--hs-ranke-knospen-s); mask-image: var(--hs-ranke-knospen-s); }
+.hs-tagebuch .hs-etikett { color: var(--hs-rubrum); }
+.hs-rubrik { margin: 0 0 0.6rem; font: 600 1.3rem/1.25 var(--hs-titel); color: var(--hs-rubrum); text-align: left; hyphens: manual; }
+.hs-bezug { margin: 0 0 0.3rem; font-size: 1rem; font-style: italic; color: var(--hs-tinte-blass); text-align: left; }
+.hs-eintrag { margin: 1.4rem 0 0; padding-top: 1.2rem; border-top: 1px solid var(--hs-linie); }
+.hs-eintrag:first-of-type { margin-top: 0.2rem; padding-top: 0; border-top: 0; }
+.hs-tagebuch > p:first-of-type::first-letter,
+.hs-eintrag:not(.hs-eintrag--schlicht) > p:first-of-type::first-letter {
+  /* Feld über zwei Zeilen; Zeilenhöhe und Innenabstand stellen den Versal in die Mitte des Feldes */
+  float: left; font: 700 3.3rem/0.6 var(--hs-titel); color: var(--hs-rubrum);
+  padding: 0.175rem 0.55rem 1.02rem; margin: 0.3rem 0.65rem 0 0;
+  background: var(--hs-initiale-grund) url("initiale-grund.svg") center / 12px 12px;
+  border: 1px solid var(--hs-gold);
+  box-shadow: inset 0 0 0 2px var(--hs-initiale-grund), inset 0 0 0 3px var(--hs-gold);
+}
+.hs-eintrag:not(.hs-eintrag--schlicht):nth-of-type(even) > p:first-of-type::first-letter { color: var(--hs-blau); }
+
+/* Formen des Tagebuchs: Brief, Liste, Abschrift einer Urkunde, Gebet, Rechnung */
+.hs-brief { margin: 0.4rem 0 0.2rem; padding: 0.1rem 0 0.1rem 1.1rem; border-left: 2px solid var(--hs-haus); }
+.hs-brief .hs-anrede { font-style: italic; }
+.hs-brief .hs-gruss { text-align: right; font-style: italic; }
+.hs-liste { list-style: none; margin: 0.3rem 0 0.9rem; padding: 0; text-align: left; }
+.hs-liste li { padding: 0.08rem 0 0.08rem 1.4rem; text-indent: -1.4rem; }
+.hs-liste li::before { content: "¶ "; color: var(--hs-rubrum); }
+.hs-liste li:nth-child(even)::before { color: var(--hs-blau); }
+.hs-urkunde {
+  margin: 0.7rem auto 1rem; padding: 0.9rem 1.1rem; max-width: 30rem; text-align: left; hyphens: manual;
+  background: var(--hs-papier-2); border: 1px solid var(--hs-gold); outline: 1px solid var(--hs-gold); outline-offset: 3px;
+}
+.hs-urkunde p:first-child::first-line { font-variant-caps: small-caps; font-variant-ligatures: none; letter-spacing: 0.06em; }
+.hs-gebet { margin: 0.6rem auto 1rem; max-width: 26rem; text-align: center; font-style: italic; hyphens: manual; }
+.hs-rechnung { min-width: min(100%, 22rem); border-collapse: collapse; margin: 0.2rem 0 0.9rem; text-align: left; font-variant-numeric: lining-nums tabular-nums; }
+.hs-rechnung caption { caption-side: top; text-align: left; font-style: italic; color: var(--hs-tinte-blass); padding: 0 0 0.3rem; }
+.hs-rechnung td { padding: 0.15rem 0; border-bottom: 1px dotted var(--hs-gold); vertical-align: bottom; }
+.hs-rechnung td + td { padding-left: 1.6rem; text-align: right; }
+.hs-rechnung .hs-summe td { border-top: 1px solid var(--hs-tinte-blass); border-bottom: 0; font-weight: 600; }
+
+/* Abgeleitetes als Randnotiz; auf breiten Schirmen steht sie wie eine Glosse im Rand */
+.hs-randnotiz {
+  border-left: 3px solid var(--hs-gold); padding: 0.2rem 0 0.2rem 1rem; margin: 1.2rem 0;
+  font-style: italic; color: var(--hs-tinte-blass);
+}
+.hs-randnotiz .hs-etikett { color: var(--hs-gold-schrift); font-style: normal; }
+.hs-randnotiz p { margin: 0 0 0.5rem; }
+@media (min-width: 82rem) {
+  .hs-kapitel > .hs-randnotiz {
+    float: right; clear: right; width: 15rem; margin: 0.4rem -16.6rem 1rem 0; padding-left: 0.9rem;
+    font-size: 1rem; line-height: 1.45;
+  }
+}
+
+/* Steckbrief und Kennzahlen */
+.hs-steckbrief { display: grid; grid-template-columns: minmax(9rem, max-content) 1fr; gap: 0.35rem 1.2rem; margin: 0.4rem 0 0; }
+.hs-steckbrief dt {
+  font: 600 1rem/1.62 var(--hs-text); letter-spacing: 0.12em; color: var(--hs-gold-schrift);
+}
+.hs-steckbrief dd { margin: 0; }
+.hs-steckbrief ul { margin: 0; padding-left: 1.1rem; }
+@media (max-width: 34rem) {
+  .hs-steckbrief { grid-template-columns: 1fr; gap: 0.1rem; }
+  .hs-steckbrief dd { margin-bottom: 0.6rem; }
+}
+.hs-kennzahlen { display: flex; flex-wrap: wrap; gap: 0.8rem; margin: 1rem 0; }
+.hs-kennzahl { flex: 1 1 9rem; border: 1px solid var(--hs-linie); background: var(--hs-papier); padding: 0.7rem 0.9rem; }
+.hs-kennzahl b { display: block; font: 600 1.7rem/1.1 var(--hs-titel); font-variant-numeric: lining-nums tabular-nums; }
+.hs-kennzahl span { display: block; margin-top: 0.3rem; font-size: 1rem; line-height: 1.4; color: var(--hs-tinte-blass); }
+
+/* Register */
+.hs-tabelle-rahmen { overflow-x: auto; margin: 0.6rem 0; }
+table.hs-register { width: 100%; border-collapse: collapse; font-size: 1.05rem; }
+.hs-register th {
+  text-align: left; font: 600 0.95rem/1.3 var(--hs-text); letter-spacing: 0.12em;
+  color: var(--hs-rubrum); border-bottom: 2px solid var(--hs-gold); padding: 0.4rem 0.5rem;
+}
+.hs-register td { border-bottom: 1px solid var(--hs-linie); padding: 0.5rem; vertical-align: top; }
+.hs-register td.hs-zeit { font-variant-numeric: lining-nums tabular-nums; }
+.hs-register .hs-art { font: 600 0.95rem/1.5 var(--hs-text); letter-spacing: 0.12em; color: var(--hs-gold-schrift); white-space: nowrap; }
+.hs-register .hs-leer { margin: 0; }
+@media (max-width: 34rem) {
+  table.hs-register thead { display: none; }
+  .hs-register tr { display: block; border-bottom: 1px solid var(--hs-linie); padding: 0.5rem 0; }
+  .hs-register td { display: block; border: 0; padding: 0.1rem 0; }
+}
+
+/* Quellen und Quellenmarken */
+a.hs-q {
+  font: 600 0.85rem/1 var(--hs-text); letter-spacing: 0.04em; text-decoration: none; color: var(--hs-gold-schrift);
+  border: 1px solid var(--hs-linie); padding: 0.1rem 0.3rem; border-radius: 2px; vertical-align: 0.1em; font-variant-numeric: lining-nums;
+}
+a.hs-q:hover { border-color: var(--hs-gold); }
+.hs-quellen { padding-left: 0; list-style: none; }
+.hs-quellen li { margin: 0 0 0.6rem; padding-left: 3rem; text-indent: -3rem; scroll-margin-top: 1rem; }
+.hs-quellen li b { display: inline-block; width: 3rem; text-indent: 0; color: var(--hs-rubrum); font-variant-numeric: lining-nums; }
+.hs-quellen li:target { background: var(--hs-papier-2); outline: 1px solid var(--hs-linie); }
+
+/* Portal */
+.hs-welten { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 1.2rem; margin: 0 0 2rem; }
+.hs-welt {
+  display: block; background: var(--hs-papier-2); border: 1px solid var(--hs-linie); padding: 1.3rem 1.3rem 1.1rem;
+  color: inherit; text-decoration: none; box-shadow: var(--hs-schatten); transition: border-color 0.15s ease;
+}
+.hs-welt:hover { border-color: var(--hs-gold); }
+.hs-welt h3 { font: 700 1.75rem/1.15 var(--hs-titel); margin: 0.3rem 0 0.4rem; }
+.hs-welt h3::first-letter { color: var(--hs-rubrum); }
+.hs-welt .hs-status { font: 600 0.95rem/1.2 var(--hs-text); letter-spacing: 0.14em; color: var(--hs-rubrum); }
+.hs-welt p { margin: 0.4rem 0 0; }
+.hs-welt .hs-mehr { color: var(--hs-haus); font-style: italic; margin-top: 0.8rem; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.18em; }
+
+/* Bücher (je Spielfigur eines) und Kapitel (fortlaufend über den ganzen Lauf) */
+.hs-buch { margin: 2.6rem 0 0; scroll-margin-top: 1rem; }
+.hs-buch-kopf {
+  text-align: center; padding: 1.3rem 1rem 1.1rem; margin: 0 0 2rem; background: var(--hs-papier-2);
+  border-top: 3px double var(--hs-gold); border-bottom: 3px double var(--hs-gold);
+}
+.hs-buch-nr, .hs-kapitel-nr {
+  margin: 0 0 0.3rem; font: 600 1rem/1.3 var(--hs-text); letter-spacing: 0.26em;
+  color: var(--hs-rubrum);
+}
+.hs-abschnitt .hs-buch-kopf h3 { margin: 0 0 0.4rem; font: 700 clamp(1.9rem, 6.4vw, 2.7rem)/1.08 var(--hs-titel); }
+.hs-buch-zeit { margin: 0; font-style: italic; color: var(--hs-tinte-blass); }
+.hs-kapitel { margin: 2.8rem 0 0; scroll-margin-top: 1rem; }
+.hs-kapitel + .hs-kapitel { margin-top: 3.2rem; padding-top: 2.4rem; border-top: 1px solid var(--hs-linie); }
+.hs-kapitel::after { content: ""; display: block; clear: both; }
+.hs-kapitel-kopf { text-align: center; margin: 0 0 1.2rem; }
+.hs-kapitel-kopf h4 { margin: 0 0 0.5rem; font: 700 clamp(1.6rem, 5.6vw, 2.2rem)/1.1 var(--hs-titel); }
+.hs-kapitel-zeit { margin: 0; font-size: 1.05rem; color: var(--hs-rubrum); }
+.hs-kapitel-einschnitt { margin: 0.25rem 0 0; font-size: 1.05rem; font-style: italic; color: var(--hs-tinte-blass); }
+.hs-kapitel-kopf .hs-leiste { max-width: 9rem; margin: 1rem auto 0; }
+
+/* Zeitachse im Bericht */
+.hs-zeitachse { list-style: none; margin: 0.4rem 0 1.3rem; padding: 0 0 0 0.3rem; }
+.hs-zeitachse li {
+  position: relative; display: grid; grid-template-columns: 10.5rem 1fr; column-gap: 0.4rem;
+  padding: 0.14rem 0 0.14rem 1.1rem; border-left: 2px solid var(--hs-linie); line-height: 1.45;
+}
+.hs-zeitachse li::before { content: ""; position: absolute; left: -5px; top: 0.62em; width: 8px; height: 8px; border-radius: 50%; background: var(--hs-gold); }
+.hs-zeitachse .hs-zeitpunkt { color: var(--hs-rubrum); font-variant-numeric: lining-nums tabular-nums; }
+.hs-zeitachse .hs-einschnitt { font-weight: 600; }
+.hs-zeitachse .hs-einschnitt::before { background: var(--hs-rubrum); }
+@media (max-width: 34rem) { .hs-zeitachse li { grid-template-columns: 1fr; padding-bottom: 0.3rem; } }
+
+@media (max-width: 34rem) {
+  .hs-titelblatt { margin-top: 1.4rem; padding: 1.3rem 0.4rem 1.2rem; border-width: 16px; border-image-width: 16px; }
+  .hs-tagebuch { text-align: left; padding: 1.2rem 1rem 1rem 2.2rem; }
+  .hs-tagebuch::before, .hs-tagebuch::after { left: 0.45rem; }
+  .hs-bericht, .hs-kanon { padding: 1rem 1rem 0.9rem; }
+}
+
+/* Musterblatt: Farbwahl */
+code { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; font-size: 0.86em; }
+.hs-farbwahl { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+.hs-farbwahl button {
+  font: inherit; color: var(--hs-tinte); background: var(--hs-papier-2); border: 1px solid var(--hs-gold); border-radius: 2px;
+  padding: 0.25rem 0.8rem; min-height: 2.4rem; cursor: pointer;
+}
+.hs-farbwahl button[aria-pressed="true"] { background: var(--hs-einband); color: var(--hs-einband-schrift); border-color: var(--hs-einband); }
+
+/* Kapitälchenzeilen: echte Kapitälchen der EB Garamond, ohne Ligaturen (sonst bleibt das f klein), mit Versalziffern.
+   Versalziffern auch in den Überschriften; Mediävalziffern bleiben dem Lesetext.
+   Am Ende, weil die font-Kurzschreibweise oben Kapitälchen und Ziffernart zurücksetzt. */
+.hs-titelblatt .hs-oben, .hs-titelblatt .hs-zeile, .hs-inhalt h2, .hs-etikett, .hs-steckbrief dt, .hs-register th,
+.hs-register .hs-art, .hs-welt .hs-status, .hs-buch-nr, .hs-kapitel-nr {
+  font-variant-caps: all-small-caps; font-variant-ligatures: none; font-variant-numeric: lining-nums;
+}
+.hs-abschnitt > h2, .hs-titelblatt h1, .hs-buch-kopf h3, .hs-kapitel-kopf h4, .hs-rubrik, .hs-marke { font-variant-numeric: lining-nums; }
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+@media print {
+  body { background: none; }
+  .hs-kopf, .hs-fuss { background: none; color: var(--hs-tinte); }
+  .hs-kopf nav, .hs-sprung { display: none; }
+  .hs-bericht, .hs-kanon, .hs-tagebuch, .hs-welt { box-shadow: none; }
+}
