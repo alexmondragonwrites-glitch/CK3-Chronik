@@ -4,11 +4,11 @@ Wer etwas anfängt, trägt sich unter „In Arbeit“ ein (wer, seit wann, welch
 
 ## In Arbeit
 
-- **Gerüst der CK3-Chronik mit der ersten Spielfigur** (Claude, 17.11.2026): Portal, Seite des ersten Laufs mit Titelblatt, Dossier von Joshua von Silberfurt im Wortlaut, Steckbrief und leerem Kapitelteil, Erscheinungsbild „Handschrift“ mit Schriften und Ornamenten, Musterblatt, Prüfskripte und GitHub-Prüfung, Hochlade-Skript mit Datenschutzfilter und Tests, Werkstatt und Doku. Die Weltkennung ist eingetragen. Lokal fertig und geprüft, noch ohne Commit. Wartet auf die Freigabe des Spielers für den ersten Push.
+Noch nichts.
 
 ## Zur Prüfung
 
-Noch nichts.
+- **Gerüst der CK3-Chronik mit der ersten Spielfigur** (Claude, 17.11.2026): Portal, Seite des ersten Laufs mit Titelblatt, Dossier von Joshua von Silberfurt im Wortlaut, Steckbrief und leerem Kapitelteil, Erscheinungsbild „Handschrift“ mit Schriften und Ornamenten, Musterblatt, Prüfskripte und GitHub-Prüfung, Hochlade-Skript mit Datenschutzfilter und Tests, Werkstatt und Doku. Die Weltkennung ist eingetragen. Online seit `afde4c9`. Prüfen: Wortlaut des Dossiers gegen `lore/`, Erlaubnislisten in `scripts/monitor_daten.py` gegen die Ablage des Monitors, Erscheinungsbild in Firefox und Safari (bisher nur in Chrome angesehen).
 
 ## Offen
 

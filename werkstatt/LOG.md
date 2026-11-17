@@ -1,5 +1,11 @@
 # Werkstatt-Log
 
+## 2026-11-17 – Erster Push (Claude)
+
+- Der Spieler hat Vorschau und Stand gesehen und freigegeben („Ja, hochladen“). Hochgeladen: `afde4c9`, 59 Dateien, das Gerüst mit dem Dossier der ersten Spielfigur.
+- Vor dem Commit liefen alle Prüfungen: Datenprüfung, 25 untergeschobene Fälle, 17 Python-Tests, Kontrast, Ornamente, `privat-pruefen.py`.
+- GitHub Pages schaltet der Spieler ein: Einstellungen → Pages → „Deploy from a branch“, `main`, `/`. Die Seite liegt dann unter `https://alexmondragonwrites-glitch.github.io/CK3-Chronik/`.
+
 ## 2026-11-17 – Dossier eingebunden, Weltkennung eingetragen (Claude)
 
 - Auftrag der Hauptsitzung am Abend: das Dossier `lore/joshua-von-silberfurt.md` einbinden, ohne es umzuschreiben; die Welt `ck3:a2be71f2-d985-4ba1-b9d7-05841d0295fc` für den ersten Lauf eintragen; beim Arbeitstitel bleiben; die Entscheidung des Spielers zum Ort festhalten.

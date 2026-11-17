@@ -1,6 +1,6 @@
 # Erster Lauf · Stand
 
-Stand 17.11.2026, abends (Claude). Das Gerüst steht lokal, noch ohne Commit. Kein Buch, kein Kapitel. Nächste freie Quellennummer: **Q5** (Q1 das Briefing mit den Angaben des Spielers, Q2 das Dossier, Q3 der Paradox-Monitor mit der ersten Aufnahme, Q4 die Angabe des Spielers zum Ort).
+Stand 17.11.2026, abends (Claude). Das Gerüst ist online seit `afde4c9`. Kein Buch, kein Kapitel. Nächste freie Quellennummer: **Q5** (Q1 das Briefing mit den Angaben des Spielers, Q2 das Dossier, Q3 der Paradox-Monitor mit der ersten Aufnahme, Q4 die Angabe des Spielers zum Ort).
 
 ## Figur und Kanon
 
