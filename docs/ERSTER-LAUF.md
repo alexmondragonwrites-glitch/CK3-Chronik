@@ -40,13 +40,16 @@ Das Gerüst im HTML, mit den Bausteinen aus `musterblatt.html`:
     <div class="hs-bericht"><span class="hs-etikett">Belegt</span> … <p class="hs-quelle">…</p></div>
     <aside class="hs-randnotiz"><span class="hs-etikett">Abgeleitet</span> …</aside>
     <div class="hs-tagebuch"><span class="hs-etikett">Tagebuch</span>
+      <div class="hs-bezug">Erzählt zu den Aufnahmen vom … Was die Spielfigur über … schreibt, folgt dem Bericht und dem Register; … ist erzählt.</div>
       <section class="hs-eintrag"><h5 class="hs-rubrik">Datumszeile</h5><p>…</p></section>
     </div>
   </article>
 </section>
 ```
 
-Mit dem ersten Buch kommt ein Eintrag in `meta.json` unter `buecher` dazu (Nummer, Kennung und Name der Spielfigur, Spieldatum von und bis). Ein Eintrag mit eigener Form trägt `hs-eintrag--schlicht`; dann entfällt die Schmuckinitiale.
+Die Bezugszeile (`hs-bezug`) ist ein `div`, damit die Schmuckinitiale beim ersten Eintrag bleibt. Sie sagt, zu welchen Aufnahmen erzählt wird und was Erzählung ist; auch die Tage von Einträgen zwischen den belegten Daten gehören dazu.
+
+Mit dem ersten Buch kommt ein Eintrag in `meta.json` unter `buecher` dazu (Nummer, Kennung und Name der Spielfigur, Spieldatum von und bis), darin unter `kapitel` je Kapitel Nummer, Titel, Spieldatum von und bis, die letzte Aufnahme und der Tag der Aufnahme. Die Datenprüfung vergleicht die Kapitel und ihre Stichtage mit der Seite (`data-spieldatum-bis` am Kapitel). Ein Eintrag mit eigener Form trägt `hs-eintrag--schlicht`; dann entfällt die Schmuckinitiale. Im Inhaltsverzeichnis stehen die Kapitel unter „Bücher und Kapitel“ in einer Liste `hs-inhalt-kapitel`.
 
 ## Tagebuch und Kanon
 
@@ -74,6 +77,8 @@ Mit dem ersten Buch kommt ein Eintrag in `meta.json` unter `buecher` dazu (Numme
 
 Der Monitor liest binäre Spielstände mit dem Werkzeug rakaly. Am 17.11.2026 nennt noch keine Version von rakaly CK3 1.21. Zahlen aus 1.21 gelten als belegt, sobald der Spieler fünf Werte im Spiel verglichen hat; den Stand führt der Monitor. Bis dahin tragen die Aufnahmen den Lesestand „ungeprüft“, und ein Kapitel wartet.
 
+Am Abend des 17.11.2026 hat der Spieler Werte im Spiel verglichen. Der Monitor führt Version 1.21.0 seit der Aufnahme Nr. 14 als im Spiel bestätigt; die Aufnahmen davor tragen den Vermerk vom Zeitpunkt des Lesens, bis der Monitor die Welt neu aufbaut. Das Faktenblatt nennt im Kopf den jüngsten Vermerk. Sieben Abschnitte nennt rakaly weiter nur unter Platzhalternamen; was dort steht, ist weder gelesen noch bestätigt.
+
 ## Erscheinungsbild
 
 „Handschrift“ nach `assets/handschrift.css`: Pergament, braunschwarze Tinte, rote Rubriken, Schmuckinitialen, Blattranke. Farbe und Ornament des Laufs stehen noch aus: Den Vorschlag für die Farbe liefert das Wappen des Hauses, der Spieler bestätigt; bis dahin gilt die Vorgabe (Blau, Ranke). Die Farben zum Ansehen: `musterblatt.html`. Eintragen an `<html>` der Chronik (`data-farbe`, `data-stil`) und in `meta.json` (`farbe`, `stil`).
@@ -84,8 +89,8 @@ Die Welt des Laufs im Monitor ist `ck3:a2be71f2-d985-4ba1-b9d7-05841d0295fc` (�
 
 ## Ablauf für ein Kapitel
 
-1. Aufnahmen hochladen oder lokal bauen (`--no-push`), Faktenblatt für den Zeitraum erzeugen (`werkstatt/erster-lauf/fakten/kapitel-N.md`).
+1. Aufnahmen hochladen oder lokal bauen (`--no-push`), Faktenblatt für den Zeitraum erzeugen: `py -3 scripts/fakten.py --save erster-lauf --kapitel N --von <Stichtag davor> --bis <Stichtag>` schreibt `werkstatt/erster-lauf/fakten/kapitel-N.md`. Das Blatt nennt Titel so, wie die Aufnahme sie nennt; ein Titel „ohne Stufenname“ bekommt im Kapitel keine Bezeichnung, die der Spieler nicht aus dem Spiel bestätigt hat. Angaben des Spielers und Funde, die in den Aufnahmen fehlen, kommen ins Beiblatt `kapitel-N-beiblatt.md`; das Skript hängt es an.
 2. Einschnitt vorschlagen, Bestätigung des Spielers abwarten.
-3. Kapitel in `chronik.html` schreiben, Register in `events.json` anhängen, Quellen ergänzen, `STAND.md` nachziehen.
+3. Kapitel in `chronik.html` schreiben, Register in `events.json` anhängen, Quellen ergänzen, das Kapitel in `meta.json` und im Inhaltsverzeichnis eintragen, Steckbrief, „Haus und Titel“ und „Offene Fragen“ auf den Stichtag bringen, `STAND.md` nachziehen.
 4. Prüfen: `node scripts/validate-data.mjs`, `py -3 scripts/privat-pruefen.py`, Vorschau im Browser (hell, dunkel, Handy).
 5. Hochladen nach Freigabe.

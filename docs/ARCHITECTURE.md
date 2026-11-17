@@ -38,6 +38,7 @@ Ein Repository für beliebig viele Partien in Crusader Kings III, aufgebaut wie 
 ├── scripts/
 │   ├── publish-monitor.py      # Aufnahmen aus dem Paradox-Monitor, Upload nach Bestätigung
 │   ├── monitor_daten.py        # Auswahl und Datenschutzfilter (getestet in test-monitor-daten.py)
+│   ├── fakten.py               # Faktenblatt je Kapitel aus den gefilterten Aufnahmen, mit Beiblatt (werkstatt/<lauf>/fakten/)
 │   ├── privat-pruefen.py       # lokal: sucht die privaten Werte aus dem Monitor im ganzen Repo
 │   ├── validate-data.mjs       # Datenprüfung (getestet in test-pruefung.mjs)
 │   ├── kontrast.mjs            # Kontrast der Farben nach WCAG AA
@@ -54,7 +55,7 @@ Ein Repository für beliebig viele Partien in Crusader Kings III, aufgebaut wie 
 
 - `data/worlds.json`: je Lauf `id`, `name`, optional `untertitel`, `path` (`saves/<id>/`), `page`, `status` (`laufend` oder `abgeschlossen`), `started`, bei abgeschlossenen Läufen `ended`, `description`.
 - `data/monitor-sources.json`: je Lauf `save`, `name`, `world_id` (`ck3:<playthrough_id>` oder `null`) und, solange die Kennung fehlt, `suche` (`angelegt_ab`, `spielversion`, `name`, `start`). Ein abgeschlossener Lauf trägt `abgeschlossen` mit `datum` und `hinweis`.
-- `saves/<id>/data/meta.json`: `id`, `name`, `name_status`, `game`, `game_version`, `status`, `started`, optional `farbe` und `stil` (wie an `<html>`), `spielfigur` (Name der ersten Spielfigur und ihr Dossier unter `lore/`), `buecher` (je Spielfigur ein Eintrag, in der Reihenfolge der Bücher), `monitor.world_id`.
+- `saves/<id>/data/meta.json`: `id`, `name`, `name_status`, `game`, `game_version`, `status`, `started`, optional `farbe` und `stil` (wie an `<html>`), `spielfigur` (Name der ersten Spielfigur und ihr Dossier unter `lore/`), `buecher` (je Spielfigur ein Eintrag, in der Reihenfolge der Bücher: `nr`, `figur`, `name`, `spieldatum_von`, `spieldatum_bis` und unter `kapitel` je Kapitel `nr`, `titel`, `spieldatum_von`, `spieldatum_bis`, `aufnahme_bis`, `aufgenommen`), `monitor.world_id`.
 - Figurenkanon auf der Seite: Ein Kasten mit `data-kanon="lore/<name>.md"` gibt das Dossier im Wortlaut wieder. Die Datenprüfung vergleicht jeden Absatz der Datei bis vor „## Offen“ mit der Seite; der Zitatblock am Anfang der Datei ist der Rahmen der Werkstatt und zählt nicht mit.
 - `saves/<id>/data/events.json` (Register, nur anhängen): je Eintrag `id` (`<lauf>-NNNN`), **entweder** `spieldatum` (`JJJJ-MM-TT`, eigenes Datum aus dem Spielstand) **oder** `zeitraum` (`[von, bis]`, Spieldaten zweier Aufnahmen; `von` darf `null` sein) oder ersatzweise `game_date_label`; dazu `recorded` (Tag der Aufnahme), `kind` (`fakt` = Belegt, `rekonstruktion` = Abgeleitet), `category`, `title`, `description`, `source` (Quellennummern wie `Q1`), optional `chapter` (Nummer des Kapitels) und `correction` (`date`, `note`).
 - Aufnahmen: siehe `docs/MONITOR.md`.
@@ -65,7 +66,7 @@ Verweise von einer Seite auf Markdown-Dateien des Repos (Kanon in `lore/`, Brief
 
 ## Bücher und Kapitel
 
-Jede Spielfigur hat ein Buch: `<section class="hs-buch" id="buch-N">` in `chronik.html`. Darin stehen die Kapitel als `<article class="hs-kapitel" id="kapitel-N">`. Bücher zählen ab 1, Kapitel zählen über alle Bücher fortlaufend; die Prüfung achtet auf beides. Die Bausteine eines Kapitels zeigt `musterblatt.html`, die Regeln stehen in `docs/<LAUF>.md`.
+Jede Spielfigur hat ein Buch: `<section class="hs-buch" id="buch-N">` in `chronik.html`. Darin stehen die Kapitel als `<article class="hs-kapitel" id="kapitel-N">`. Bücher zählen ab 1, Kapitel zählen über alle Bücher fortlaufend; die Prüfung achtet auf beides. Jedes Kapitel trägt seinen Stichtag als `data-spieldatum-bis`; nennt `meta.json` die Kapitel, vergleicht die Prüfung Nummern und Stichtage mit der Seite. Die Bausteine eines Kapitels zeigt `musterblatt.html`, die Regeln stehen in `docs/<LAUF>.md`.
 
 ## Erscheinungsbild
 

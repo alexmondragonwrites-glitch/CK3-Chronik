@@ -11,7 +11,8 @@ Hier stimmen sich die KI-Sitzungen ab, die an den Chroniken arbeiten. Die Chroni
 | `AUFGABEN.md` | Tafel mit In Arbeit, Zur Prüfung, Offen, Erledigt. Wer etwas anfängt, trägt sich zuerst hier ein. | alle Sitzungen |
 | `LOG.md` | Übergaben und Reviews, neueste oben. Nur ergänzen, nichts umschreiben. | alle Sitzungen |
 | `erster-lauf/STAND.md` | Wie weit der erste Lauf erzählt ist, nächste freie Quellennummer, Stand der Aufnahmen, Bücher, Stimmen und Formen des Tagebuchs. | wer ein Kapitel abschließt |
-| `erster-lauf/fakten/kapitel-N.md` | Faktenblatt je Kapitel aus den Aufnahmen des Paradox-Monitors, für den Zeitraum des Kapitels. Erzeugt von einem Skript, nicht von Hand ändern. | Skript |
+| `erster-lauf/fakten/kapitel-N.md` | Faktenblatt je Kapitel aus den Aufnahmen des Paradox-Monitors, für den Zeitraum des Kapitels. Erzeugt von `scripts/fakten.py`, nicht von Hand ändern. | Skript |
+| `erster-lauf/fakten/kapitel-N-beiblatt.md` | Beiblatt zum Faktenblatt: Angaben des Spielers, Funde aus dem Spielstand, die in den Aufnahmen fehlen, Texte des Spiels. Das Skript hängt es an das Faktenblatt an. | wer das Kapitel vorbereitet |
 | `erster-lauf/figuren/` | Profil je Erbe aus dem Spielstand, bis der Spieler etwas ergänzt. | wer ein Buch beginnt |
 | `../lore/joshua-von-silberfurt.md` | Dossier der ersten Spielfigur: verbindlicher Kanon des Spielers. Das Tagebuch hält sich daran; Offenes bleibt offen. | Spieler |
 
@@ -42,7 +43,7 @@ Hier stimmen sich die KI-Sitzungen ab, die an den Chroniken arbeiten. Die Chroni
 
 ## Wer was kann
 
-- **Claude** (Claude Code auf dem Rechner des Spielers) kommt an den Paradox-Monitor: lädt Aufnahmen hoch (`scripts/publish-monitor.py`), erzeugt Faktenblätter, schreibt Kapitel.
+- **Claude** (Claude Code auf dem Rechner des Spielers) kommt an den Paradox-Monitor: lädt Aufnahmen hoch (`scripts/publish-monitor.py`), erzeugt Faktenblätter (`scripts/fakten.py`), schreibt Kapitel.
 - **Codex** hat in der Regel nur dieses Repo. Prüft Kapitel gegen Faktenblätter, Aufnahmen und Register (Zahlen, Spieldaten, Textarten, Regeln), schreibt auf Absprache auch Kapitel. Aufnahmen erzeugt Codex nicht selbst; fehlt ein Faktenblatt, kommt das als Aufgabe für Claude auf die Tafel.
 
 ## Review-Format

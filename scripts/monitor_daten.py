@@ -132,6 +132,9 @@ SPIELER_FELDER = (
     # seit CK3 1.21 (Kaufleute, Landlose): Art der Bindung an den Lehnsherrn oder Gönner, Ritus, Sitz, Tributpflichtige,
     # Gesetze (bei Kaufleuten etwa der Zweck der Gesellschaft)
     "lehnsherr_art", "ritus", "sitz", "tributpflichtige", "gesetze",
+    # seit Leser 3 des Monitors: seit wann das Haus des Lehnsherrn oder Gönners den Vertrag hält (bei einem neuen
+    # Vorgesetzten der Tag, an dem er begann) und die Art des Vertrags, wie das Spiel sie nennt
+    "lehnsherr_seit", "lehnsherr_vertrag",
 )
 FIGUR_FELDER = ("id", "name", "beiname", "weiblich", "geburt", "haus", "haus_name", "lebend", "tod", "todesursache",
                 "ehepartner", "fruehere_ehepartner", "kinder", "verlobt", "eltern", "titel", "titel_name", "titel_stufe",

@@ -91,10 +91,25 @@ try {
   fall("Registereintrag mit Spieldatum und Zeitraum zugleich", geaendert("saves/erster-lauf/data/events.json",
     () => JSON.stringify([{ ...eintrag, spieldatum: "0867-01-01", zeitraum: [null, "0867-01-01"] }])), [/erster-lauf-0001\): spieldatum/]);
   fall("Registereintrag mit unbekannter Quelle", geaendert("saves/erster-lauf/data/events.json",
-    () => JSON.stringify([{ ...eintrag, zeitraum: ["0867-01-01", "0867-03-01"], source: "Q9" }])), [/Quelle Q9 steht unter Quellen der Chronik nicht/]);
-  fall("Kapitel außerhalb der Zählung", geaendert("saves/erster-lauf/chronik.html",
-    (t) => t.replace("</main>", '<section class="hs-buch" id="buch-1"><article class="hs-kapitel" id="kapitel-2"></article></section></main>')),
-  [/Kapitel 2 an Stelle 1/, /buecher nennt 0 Bücher, die Chronik hat 1/]);
+    () => JSON.stringify([{ ...eintrag, zeitraum: ["0867-01-01", "0867-03-01"], source: "Q999" }])), [/Quelle Q999 steht unter Quellen der Chronik nicht/]);
+  // Unabhängig davon, wie viele Bücher und Kapitel die Chronik schon hat: Ein Buch 90 mit Kapitel 99 fällt aus der Zählung.
+  fall("Buch und Kapitel außerhalb der Zählung", geaendert("saves/erster-lauf/chronik.html",
+    (t) => t.replace("</main>", '<section class="hs-buch" id="buch-90"><article class="hs-kapitel" id="kapitel-99"></article></section></main>')),
+  [/Buch 90 an Stelle \d+/, /Kapitel 99 an Stelle \d+/, /buecher nennt \d+ Bücher, die Chronik hat \d+/]);
+  fall("Registereintrag zu einem Kapitel, das es nicht gibt", geaendert("saves/erster-lauf/data/events.json",
+    () => JSON.stringify([{ ...eintrag, spieldatum: "0867-01-01", chapter: 99 }])), [/chapter 99 gibt es in der Chronik nicht/]);
+  fall("Kapitel in meta.json, das die Chronik nicht hat, und Kapitel ohne Stichtag", () => {
+    const zurueck = [
+      geaendert("saves/erster-lauf/chronik.html", (t) => t.replace("</main>",
+        '<section class="hs-buch" id="buch-90"><article class="hs-kapitel" id="kapitel-99"></article></section></main>'))(),
+      geaendert("saves/erster-lauf/data/meta.json", (t) => {
+        const m = JSON.parse(t);
+        m.buecher = [...(m.buecher || []), { nr: 90, name: "Probe", kapitel: [{ nr: 98, spieldatum_bis: "0900-01-01" }] }];
+        return JSON.stringify(m);
+      })(),
+    ];
+    return () => zurueck.forEach((f) => f());
+  }, [/buecher nennt die Kapitel [\d, ]*98, die Chronik hat [\d, ]*99/, /Kapitel 99 braucht seinen Stichtag/]);
   fall("Farbe, die das Stylesheet nicht kennt", geaendert("saves/erster-lauf/data/meta.json", (t) => t.replace('"status"', '"farbe": "rosa", "status"')),
     [/farbe rosa kennt assets\/handschrift\.css nicht/]);
   fall("Lauf ohne Karte im Portal", geaendert("index.html", (t) => t.replace('href="saves/erster-lauf/chronik.html"', 'href="#"')), [/Karte für den Lauf erster-lauf fehlt/]);

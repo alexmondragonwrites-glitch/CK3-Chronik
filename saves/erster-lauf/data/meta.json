@@ -15,7 +15,25 @@
     "name": "Joshua von Silberfurt",
     "kanon": "lore/joshua-von-silberfurt.md"
   },
-  "buecher": [],
+  "buecher": [
+    {
+      "nr": 1,
+      "figur": 43739,
+      "name": "Joshua von Silberfurt",
+      "spieldatum_von": "0867-01-01",
+      "spieldatum_bis": null,
+      "kapitel": [
+        {
+          "nr": 1,
+          "titel": "Die Reise nach Frankfurt",
+          "spieldatum_von": "0867-01-01",
+          "spieldatum_bis": "0867-04-02",
+          "aufnahme_bis": 2,
+          "aufgenommen": "2026-11-17"
+        }
+      ]
+    }
+  ],
   "monitor": {
     "world_id": "ck3:a2be71f2-d985-4ba1-b9d7-05841d0295fc"
   }

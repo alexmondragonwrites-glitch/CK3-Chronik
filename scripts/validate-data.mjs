@@ -168,6 +168,23 @@ for (const id of ids) {
   if (meta && Array.isArray(meta.buecher) && meta.buecher.length !== buecher.length) {
     meldung(`${basis}/data/meta.json`, `buecher nennt ${meta.buecher.length} Bücher, die Chronik hat ${buecher.length}`);
   }
+  // Nennt meta.json die Kapitel der Bücher, dann dieselben wie die Chronik, mit demselben Stichtag
+  const stichtage = new Map([...chronik.matchAll(/<article\b[^>]*\bid="kapitel-(\d+)"[^>]*>/g)]
+    .map((m) => [Number(m[1]), (/data-spieldatum-bis="([^"]*)"/.exec(m[0]) || [])[1]]));
+  for (const [nr, tag] of stichtage) {
+    if (!TAG.test(tag || "")) meldung(chronikPfad, `Kapitel ${nr} braucht seinen Stichtag als data-spieldatum-bis (JJJJ-MM-TT)`);
+  }
+  const metaKapitel = meta && Array.isArray(meta.buecher) ? meta.buecher.flatMap((b) => (Array.isArray(b.kapitel) ? b.kapitel : [])) : [];
+  if (metaKapitel.length) {
+    const laut = metaKapitel.map((k) => k.nr).join(", ");
+    const hat = kapitel.map(([nr]) => nr).join(", ");
+    if (laut !== hat) meldung(`${basis}/data/meta.json`, `buecher nennt die Kapitel ${laut}, die Chronik hat ${hat || "keine"}`);
+    for (const k of metaKapitel) {
+      if (stichtage.has(k.nr) && stichtage.get(k.nr) !== k.spieldatum_bis) {
+        meldung(`${basis}/data/meta.json`, `Kapitel ${k.nr}: spieldatum_bis ${k.spieldatum_bis}, in der Chronik steht ${stichtage.get(k.nr)}`);
+      }
+    }
+  }
 
   const ereignisse = json(`${basis}/data/events.json`);
   const eids = new Set();

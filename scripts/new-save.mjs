@@ -182,7 +182,7 @@ schreiben(join(basis, "data", "manifest.json"), json({ latestReport: "chronik.ht
 schreiben(join(basis, "data", "events.json"), "[]\n");
 const laufname = untertitel ? `${name} · ${untertitel}` : name;
 schreiben(join(ROOT, "werkstatt", id, "STAND.md"), `# ${laufname} · Stand\n\nAngelegt am ${started}. Noch kein Buch und kein Kapitel; nächste freie Quellennummer: Q1.\n`);
-schreiben(join(ROOT, "werkstatt", id, "fakten", "LIESMICH.md"), `# Faktenblätter\n\nJe Kapitel ein Faktenblatt \`kapitel-N.md\` aus den Aufnahmen des Paradox-Monitors für den Zeitraum des Kapitels. Erzeugt von einem Skript, nicht von Hand ändern.\n`);
+schreiben(join(ROOT, "werkstatt", id, "fakten", "LIESMICH.md"), `# Faktenblätter\n\nJe Kapitel ein Faktenblatt \`kapitel-N.md\` aus den Aufnahmen des Paradox-Monitors für den Zeitraum des Kapitels. Erzeugt von \`scripts/fakten.py\` (\`--save ${id} --kapitel N --bis JJJJ-MM-TT\`), nicht von Hand ändern.\n\nWas die Aufnahmen nicht hergeben (Angaben des Spielers, Funde aus dem Spielstand, Texte des Spiels), steht von Hand im Beiblatt \`kapitel-N-beiblatt.md\`; das Skript hängt es an das Faktenblatt an.\n`);
 schreiben(join(ROOT, "werkstatt", id, "figuren", "LIESMICH.md"), `# Figurenprofile\n\nJe Erbe ein Profil aus dem Spielstand (Eigenschaften, Erziehung, Fertigkeiten, Familie, Glaube, Erinnerungen). Was der Spieler ergänzt, wandert nach \`lore/\` und gilt dann als Kanon.\n`);
 
 const weltenPfad = join(ROOT, "data", "worlds.json");

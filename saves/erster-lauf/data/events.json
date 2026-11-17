@@ -1,1 +1,101 @@
-[]
+[
+  {
+    "id": "erster-lauf-0001",
+    "spieldatum": "0867-01-01",
+    "recorded": "2026-11-17",
+    "kind": "fakt",
+    "category": "partie",
+    "chapter": 1,
+    "title": "Die Aufzeichnung beginnt.",
+    "description": "Joshua, 22 Jahre, führt als „Meister Joshua“ die von Silberfurt-Gesellschaft, eine Kaufmannsfamilie. Sitz Ulm in der Grafschaft Ulm, Gönner Welf (Welfen), Gesellschaftszweck Händler, Erbe Udalrich. In der Kasse 50 Gold, Einkommen 0,70 im Monat.",
+    "source": "Q5"
+  },
+  {
+    "id": "erster-lauf-0002",
+    "spieldatum": "0867-01-02",
+    "recorded": "2026-11-17",
+    "kind": "fakt",
+    "category": "gesellschaft",
+    "chapter": 1,
+    "title": "Gründung der Gesellschaft.",
+    "description": "Die Erinnerung der Spielfigur nennt den 2.1.867 als Tag der Gründung der von Silberfurt-Gesellschaft.",
+    "source": "Q5"
+  },
+  {
+    "id": "erster-lauf-0003",
+    "zeitraum": ["0867-01-01", "0867-04-02"],
+    "recorded": "2026-11-17",
+    "kind": "fakt",
+    "category": "sitz",
+    "chapter": 1,
+    "title": "Sitz nach Frankfurt verlegt.",
+    "description": "Die Gesellschaft sitzt jetzt in Frankfurt in der Grafschaft Frankfurt, vorher in Ulm.",
+    "source": "Q5"
+  },
+  {
+    "id": "erster-lauf-0004",
+    "zeitraum": ["0867-01-01", "0867-04-02"],
+    "recorded": "2026-11-17",
+    "kind": "fakt",
+    "category": "goenner",
+    "chapter": 1,
+    "title": "Neuer Gönner: Liutbert.",
+    "description": "Gönner ist jetzt Liutbert, vorher Welf (Welfen). Liutberts Titel heißt in den Daten „Mainz“; die Grafschaft Frankfurt gehört ihm seit dem 4.6.863.",
+    "source": "Q5"
+  },
+  {
+    "id": "erster-lauf-0005",
+    "spieldatum": "0867-01-30",
+    "recorded": "2026-11-17",
+    "kind": "rekonstruktion",
+    "category": "sitz",
+    "chapter": 1,
+    "title": "Ankunft in Frankfurt.",
+    "description": "Abgeleitet aus dem Vertrag mit dem Gönner Liutbert: Er beginnt im Spielstand vom 2.4.867 am 30.1.867, und der Wohnsitz der Gesellschaft ist bis zum 29.7.867 für einen weiteren Umzug gesperrt, 180 Tage später.",
+    "source": "Q7"
+  },
+  {
+    "id": "erster-lauf-0006",
+    "spieldatum": "0867-02-16",
+    "recorded": "2026-11-17",
+    "kind": "fakt",
+    "category": "familie",
+    "chapter": 1,
+    "title": "Heirat mit Cothilda (Wartenberg).",
+    "description": "Joshua heiratet Cothilda aus dem Haus Wartenberg, geboren am 1.1.849, Tochter von Nikolaus (Wartenberg).",
+    "source": "Q5"
+  },
+  {
+    "id": "erster-lauf-0007",
+    "zeitraum": ["0867-01-01", "0867-04-02"],
+    "recorded": "2026-11-17",
+    "kind": "fakt",
+    "category": "buendnis",
+    "chapter": 1,
+    "title": "Bündnis mit Nikolaus (Wartenberg).",
+    "description": "Über die Ehe von Joshua und Cothilda. Nikolaus führt die Wartenberg-Gesellschaft, eine Kaufmannsfamilie.",
+    "source": "Q5"
+  },
+  {
+    "id": "erster-lauf-0008",
+    "zeitraum": ["0867-01-01", "0867-04-02"],
+    "recorded": "2026-11-17",
+    "kind": "fakt",
+    "category": "gesellschaft",
+    "chapter": 1,
+    "title": "Gesellschaftszweck: Kunsthandwerker.",
+    "description": "Der Gesellschaftszweck heißt jetzt Kunsthandwerker, vorher Händler.",
+    "source": "Q5"
+  },
+  {
+    "id": "erster-lauf-0009",
+    "spieldatum": "0867-04-02",
+    "recorded": "2026-11-17",
+    "kind": "fakt",
+    "category": "stichtag",
+    "chapter": 1,
+    "title": "Stichtag von Kapitel I.",
+    "description": "Sitz Frankfurt, Gönner Liutbert, verheiratet mit Cothilda (Wartenberg), verbündet mit Nikolaus (Wartenberg), Erbe Udalrich. In der Kasse 32,74 Gold, Einkommen 1,24 im Monat, Prestige 25,48, Frömmigkeit 63,68, Stress 10.",
+    "source": "Q5"
+  }
+]

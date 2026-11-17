@@ -22,6 +22,7 @@ from pathlib import Path
 
 HIER = Path(__file__).resolve().parent
 sys.path.insert(0, str(HIER))
+import fakten  # noqa: E402
 import monitor_daten as md  # noqa: E402
 
 _spec = importlib.util.spec_from_file_location("publish_monitor", HIER / "publish-monitor.py")
@@ -326,6 +327,94 @@ class Hochladen(unittest.TestCase):
             dateien, idx = md.bauen(welt)
             self.assertEqual(md.pruefen(dateien, werte), [], info.get("name"))
             self.assertEqual(idx["aufnahmen"], len(welt.gueltig))
+
+
+class Faktenblatt(unittest.TestCase):
+    def test_schreibweisen(self):
+        self.assertEqual([fakten.zahl(v) for v in (1300.4844, 0.699, 50.0, -8.0, None, True)], ["1.300,48", "0,7", "50", "−8", "—", "—"])
+        self.assertEqual([fakten.zahl(v, vorzeichen=True) for v in (0.54, -17.26, 0)], ["+0,54", "−17,26", "0"])
+        self.assertEqual((fakten.datum("0867-04-02"), fakten.datum(None)), ("2.4.867", "—"))
+        self.assertEqual(fakten.zeitpunkt("2026-11-17T19:08:41+01:00"), "17.11.2026, 19:08 Uhr")
+        self.assertEqual((fakten.spielzeit(1528), fakten.spielzeit(3600), fakten.spielzeit(None)), ("25:28 min", "1:00 h", "—"))
+        self.assertEqual((fakten.alter("0845-01-01", "0867-01-01"), fakten.alter("0849-06-01", "0867-04-02")), ("22", "17"))
+        self.assertEqual([fakten.roemisch(n) for n in (1, 4, 9, 14, 23)], ["I", "IV", "IX", "XIV", "XXIII"])
+
+    def test_blatt_aus_gueltigen_aufnahmen(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            welt = md.welt_lesen(md.welt_finden(monitor_anlegen(Path(tmp)), WELT))
+            blatt = fakten.blatt(welt, "Probehaus", 1, None, "0867-03-01")
+            self.assertEqual(blatt, fakten.blatt(welt, "Probehaus", 1, None, "0867-03-01"))          # gleiche Aufnahmen, gleiches Blatt
+            self.assertTrue(blatt.startswith("# Faktenblatt · Probehaus · Kapitel I" + chr(10)))
+            for erwartet in ("**Stichtag:** Aufnahme Nr. 3, Spieldatum 1.3.867, gespeichert am 17.11.2026, 19:03 Uhr",
+                             "**Zeitraum:** Spieldatum 1.1.867 bis 1.3.867", "**Lesestand:** ungeprüft.", "**Vorläufig:**",
+                             "| Gold | 10 | 12,5 | +2,5 |", "| Prestige | — | — | — |",
+                             "| Gesellschaftszweck | Kunsthandwerker | Kunsthandwerker |  |",
+                             "Die Probe-Gesellschaft (Kaufmannsfamilie, `c_merchant_probe`)",
+                             "| Geboren | 5.3.845, 22 Jahre | 5.3.845, 22 Jahre |  |",
+                             "- **Kind:** Bero, geboren 1.1.866, 1 Jahr, Eltern im Blick: Adela (Probehaus)",
+                             "- **Krieg:** Probekrieg, seit 1.2.867, Seite der Spielfigur: Angreifer, Kriegsgrund: Anspruch",
+                             "- 1.1.867 · Nr. 1 · `beginn` · Aufzeichnung beginnt: Adela (Probehaus).",
+                             "- 11.2.867 · Nr. 3 · `geburt` · Geburt: Bero (Probehaus)."):
+                self.assertIn(erwartet, blatt)
+            for weg in ("99", "Grafschaft Irgendwo", "Neuladen", KONTO, DATEINAME, SPIELERNAME, "handelsposten", "geheimnis"):
+                self.assertNotIn(weg, blatt)                                                          # Verworfenes, Privates, Unbekanntes
+            self.assertEqual(md.privat_funde({"blatt": blatt.split(chr(10))}), [])
+            self.assertEqual(md.geheim_funde(blatt, md.geheime_werte(welt.aufnahmen, [welt.info])), [])
+
+    def test_lesestand_der_version_und_vertrag(self):
+        """Spätere Bestätigung der Spielversion gilt auch für frühere Aufnahmen; der Vertrag mit dem Gönner (Leser 3) steht im Blatt."""
+        with tempfile.TemporaryDirectory() as tmp:
+            ordner = md.welt_finden(monitor_anlegen(Path(tmp)), WELT)
+            aufnahmen = [aufnahme(1, "0867-01-01"), aufnahme(3, "0867-03-01", gold=12.5), aufnahme(4, "0867-09-01", gold=20.0),
+                         aufnahme(5, "0867-12-01", gold=25.0)]
+            for a, seit in zip(aufnahmen, ("0866-05-01", "0867-01-30", "0867-01-30", "0867-01-30")):
+                a["snapshot"]["spieler"].update(lehnsherr=5, lehnsherr_art="Gönner", lehnsherr_seit=seit, lehnsherr_vertrag="tributary_merchant")
+            for a in aufnahmen[2:]:                                                  # der Spieler hat nach der Aufnahme 3 im Spiel verglichen
+                a["snapshot"]["versionspruefung"] = {"stand": "bestätigt", "text": "Version 1.21.0: im Spiel bestätigt."}
+            (ordner / "daten.jsonl").write_text("".join(json.dumps(a, ensure_ascii=False) + chr(10) for a in aufnahmen), encoding="utf-8")
+            welt = md.welt_lesen(ordner)
+
+            gefiltert = md.aufnahme(aufnahmen[1])["spieler"]
+            self.assertEqual((gefiltert["lehnsherr_seit"], gefiltert["lehnsherr_vertrag"]), ("0867-01-30", "tributary_merchant"))
+            self.assertFalse({f for f in md.unbekannte_felder(aufnahmen[1]) if "lehnsherr" in f})
+
+            blatt = fakten.blatt(welt, "Probehaus", 1, None, "0867-03-01")
+            self.assertIn("- **Lesestand:** bestätigt. Version 1.21.0: im Spiel bestätigt. So vermerkt der Monitor seit der Aufnahme Nr. 4; "
+                          "beim Lesen der Aufnahme Nr. 3 galt „ungeprüft“." + chr(10), blatt)                         # Nr. 4, auch wenn Nr. 5 folgt
+            self.assertNotIn("**Vorläufig:**", blatt)
+            self.assertIn("| 3 | 1.3.867 | 17.11.2026, 19:03 Uhr | 10:00 min | 1.21.0 | 2 | ungeprüft |", blatt)       # Vermerk beim Lesen bleibt stehen
+            self.assertIn("| Vertrag mit Lehnsherr oder Gönner | `tributary_merchant`, beim Haus des Vorgesetzten seit 1.5.866 | "
+                          "`tributary_merchant`, beim Haus des Vorgesetzten seit 30.1.867 | geändert |", blatt)
+            spaeter = fakten.blatt(welt, "Probehaus", 2, "0867-03-01", "0867-09-01")
+            self.assertIn("- **Lesestand:** bestätigt. Version 1.21.0: im Spiel bestätigt." + chr(10), spaeter)        # eigener Vermerk, ohne Verweis
+            ohne = fakten.blatt(md.welt_lesen(md.welt_finden(monitor_anlegen(Path(tmp) / "zweiter"), WELT)), "Probehaus", 1, None, "0867-03-01")
+            self.assertNotIn("Vertrag mit Lehnsherr oder Gönner", ohne)                                                # ältere Aufnahmen: keine leere Zeile
+
+    def test_beiblatt_wird_angehaengt(self):
+        """Das von Hand geführte Beiblatt steht am Ende des Faktenblatts, seine Überschriften eine Stufe tiefer."""
+        with tempfile.TemporaryDirectory() as tmp:
+            welt = md.welt_lesen(md.welt_finden(monitor_anlegen(Path(tmp)), WELT))
+            ohne = fakten.blatt(welt, "Probehaus", 1, None, "0867-03-01")
+            bei = chr(10).join(["# Beiblatt zu Kapitel I", "", "## Angaben der Spielerin", "", "- „weil der Hafen näher liegt“  ",
+                                "", "```text", "# bleibt, wie es ist", "```", ""])
+            mit = fakten.blatt(welt, "Probehaus", 1, None, "0867-03-01", bei.replace(chr(10), chr(13) + chr(10)))
+            self.assertTrue(mit.endswith(chr(10).join(["## Beiblatt zu Kapitel I", "", "### Angaben der Spielerin", "",
+                                                       "- „weil der Hafen näher liegt“", "", "```text", "# bleibt, wie es ist", "```", ""])))
+            self.assertIn("- **Beiblatt:** `kapitel-1-beiblatt.md`, von Hand geführt und unten angehängt", mit)
+            self.assertNotIn("Beiblatt", ohne)
+            self.assertEqual(ohne, fakten.blatt(welt, "Probehaus", 1, None, "0867-03-01", "  " + chr(10)))            # leeres Beiblatt zählt nicht
+            self.assertNotIn(chr(13), mit)
+
+    def test_von_und_bis(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            welt = md.welt_lesen(md.welt_finden(monitor_anlegen(Path(tmp)), WELT))
+            anfang, aufnahmen = fakten.auswahl(welt, "0867-01-01", "0867-03-01")
+            self.assertEqual((anfang["nr"], [a["nr"] for a in aufnahmen]), (1, [3]))                   # Aufnahme 2 ist verworfen
+            anfang, aufnahmen = fakten.auswahl(welt, None, "0867-03-01")
+            self.assertEqual((anfang["nr"], [a["nr"] for a in aufnahmen]), (1, [1, 3]))
+            for von, bis in ((None, "0867-06-01"), (None, "0867-02-01"), ("0867-03-01", "0867-01-01")):
+                with self.subTest(von=von, bis=bis), self.assertRaises(SystemExit):
+                    fakten.auswahl(welt, von, bis)                                                     # verworfen, kein Stand, verkehrt herum
 
 
 @unittest.skipUnless(shutil.which("git") and shutil.which("node"), "braucht git und node")
