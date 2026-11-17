@@ -44,7 +44,9 @@ def schnappschuss(spieldatum: str, gold: float = 10.0, figur: int = 1) -> dict:
         "spieler": {"figur": figur, "name": "Adela", "anrede": "Meisterin Adela", "titel_name": "Die Probe-Gesellschaft",
                     "haupttitel": 7, "stufe": "Kaufmannsfamilie", "geburt": "0845-03-05", "alter": 22, "weiblich": True,
                     "haus": 3, "haus_name": "Probehaus", "gold": gold, "prestige": None, "titel": [7], "vasallen": [],
-                    "erbe": 2, "buendnisse": [{"mit": 5, "ueber": [[1, 5]]}], "handelsposten": 4},
+                    "erbe": 2, "buendnisse": [{"mit": 5, "ueber": [[1, 5]]}], "handelsposten": 4,
+                    "gesetze": [{"schluessel": "company_purpose_artisan", "name": "Kunsthandwerker",
+                                 "gruppe": "company_purpose", "gruppe_name": "Gesellschaftszweck"}]},
         "figuren": {
             "1": {"id": 1, "name": "Adela", "beiname": None, "weiblich": True, "geburt": "0845-03-05", "haus": 3,
                   "haus_name": "Probehaus", "lebend": True, "tod": None, "todesursache": None, "ehepartner": [],
@@ -55,7 +57,7 @@ def schnappschuss(spieldatum: str, gold: float = 10.0, figur: int = 1) -> dict:
                   "eltern": [1], "kinder": [], "titel": []},
         },
         "titel": {"7": {"id": 7, "key": "c_merchant_probe", "name": "Die Probe-Gesellschaft", "stufe": "Kaufmannsfamilie",
-                        "art": "kaufmannsfamilie", "rang": 2, "inhaber": 1, "seit": "0867-01-01", "lehnsherr_titel": None,
+                        "art": "kaufmannsfamilie", "landlos": True, "rang": 2, "inhaber": 1, "seit": "0867-01-01", "lehnsherr_titel": None,
                         "de_jure_titel": None}},
         "kriege": [{"id": 9, "name": "Probekrieg", "beginn": "0867-02-01", "angreifer": [1], "verteidiger": [5],
                     "hauptangreifer": 1, "hauptverteidiger": 5, "kriegsgrund": "Anspruch", "ziele": [7],
@@ -74,7 +76,7 @@ def schnappschuss(spieldatum: str, gold: float = 10.0, figur: int = 1) -> dict:
 def aufnahme(nr: int, spieldatum: str, **kw) -> dict:
     return {"nr": nr, "gelesen_um": f"2026-11-17T19:0{nr}:00+01:00",
             "datei": {"pfad": PFAD, "name": DATEINAME, "groesse": 123456, "geaendert": f"2026-11-17T19:0{nr}:00+01:00",
-                      "sha1": "0" * 40, "parser": "clausewitz.py 1", "ironman_laut_dateiname": True,
+                      "sha1": "0" * 40, "parser": "clausewitz.py 1", "leser": 2, "ironman_laut_dateiname": True,
                       "format": "binär, mit rakaly umgewandelt", "rakaly": "0.8.23", "unbekannte_schluessel": ["0x1"],
                       "platzhalter_schluessel": ["oscar_104", "jakob_121"], "index_exakt": True, "dauer_s": 4.0},
             "snapshot": schnappschuss(spieldatum, **kw)}
@@ -152,7 +154,10 @@ class Aufnahmen(unittest.TestCase):
         for weg in (KONTO, DATEINAME, SPIELERNAME, "sha1", "groesse", "geheimnis", "handelsposten", "kriege_aktiv", "intern"):
             self.assertNotIn(weg, text)
         self.assertEqual(a["lesung"], {"format": "binär, mit rakaly umgewandelt", "rakaly": "0.8.23", "parser": "clausewitz.py 1",
-                                       "index_exakt": True, "ironman": True, "unbekannte_schluessel": 1, "platzhalter_schluessel": 2})
+                                       "leser": 2, "index_exakt": True, "ironman": True, "unbekannte_schluessel": 1,
+                                       "platzhalter_schluessel": 2})
+        self.assertEqual(a["spieler"]["gesetze"][0]["name"], "Kunsthandwerker")   # Gesetze der Gesellschaft, seit CK3 1.21
+        self.assertIs(a["titel"]["7"]["landlos"], True)
         self.assertNotIn("oscar_104", text)                                      # Platzhalternamen nur gezählt
         self.assertEqual(a["kampagne"], {"spielzeit_s": 600, "erfolge_moeglich": True})
         self.assertEqual(a["gespeichert_um"], "2026-11-17T19:01:00+01:00")

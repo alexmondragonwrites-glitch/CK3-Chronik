@@ -129,13 +129,14 @@ SPIELER_FELDER = (
     "schrecken", "legitimitaet", "heeresstaerke", "aufgebot", "fertigkeiten", "eigenschaften", "gefangen", "erbe",
     "erbfolge", "lehnsherr", "vasallen", "titel", "domaene", "grafschaften_im_reich", "hauptstadt", "buendnisse",
     "waffenstillstaende",
-    # seit CK3 1.21 (Kaufleute, Landlose): Art der Bindung an den Lehnsherrn oder Gönner, Ritus, Sitz, Tributpflichtige
-    "lehnsherr_art", "ritus", "sitz", "tributpflichtige",
+    # seit CK3 1.21 (Kaufleute, Landlose): Art der Bindung an den Lehnsherrn oder Gönner, Ritus, Sitz, Tributpflichtige,
+    # Gesetze (bei Kaufleuten etwa der Zweck der Gesellschaft)
+    "lehnsherr_art", "ritus", "sitz", "tributpflichtige", "gesetze",
 )
 FIGUR_FELDER = ("id", "name", "beiname", "weiblich", "geburt", "haus", "haus_name", "lebend", "tod", "todesursache",
                 "ehepartner", "fruehere_ehepartner", "kinder", "verlobt", "eltern", "titel", "titel_name", "titel_stufe",
                 "bezug")
-TITEL_FELDER = ("id", "key", "name", "stufe", "art", "rang", "inhaber", "seit", "lehnsherr_titel", "de_jure_titel")
+TITEL_FELDER = ("id", "key", "name", "stufe", "art", "landlos", "rang", "inhaber", "seit", "lehnsherr_titel", "de_jure_titel")
 KRIEG_FELDER = ("id", "name", "beginn", "angreifer", "verteidiger", "hauptangreifer", "hauptverteidiger", "kriegsgrund",
                 "ziele", "anspruchsteller", "spieler_seite")
 ERINNERUNG_FELDER = ("id", "art", "datum", "figur", "beteiligte", "titel", "grund")
@@ -144,7 +145,7 @@ DYNASTIE_FELDER = ("id", "name", "oberhaupt", "ruhm", "ruhm_gesamt", "mitglieder
 DYNASTIE_HAUS_FELDER = ("id", "name", "oberhaupt", "mitglieder_lebend")
 CHRONIK_FELDER = ("id", "nr", "art", "datum", "zeitraum", "text", "figuren", "quelle", "wichtig")
 # Aus dem Block `datei` nur, wie gelesen wurde; Pfad, Name, Größe und Prüfsumme bleiben im Monitor.
-LESUNG_FELDER = {"format": "format", "rakaly": "rakaly", "parser": "parser", "index_exakt": "index_exakt",
+LESUNG_FELDER = {"format": "format", "rakaly": "rakaly", "parser": "parser", "leser": "leser", "index_exakt": "index_exakt",
                  "ironman_laut_dateiname": "ironman"}
 # Felder der Aufnahme, die hier bewusst fehlen: Verwaltung des Monitors und das Private.
 BEKANNT_OHNE_VEROEFFENTLICHUNG = {

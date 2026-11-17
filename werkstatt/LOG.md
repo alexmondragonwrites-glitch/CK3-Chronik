@@ -1,5 +1,12 @@
 # Werkstatt-Log
 
+## 2026-11-17 – Neue Felder des Monitors für das Hochlade-Skript (Claude)
+
+- Meldung der Hauptsitzung: Der Monitor liest die Welt des ersten Laufs beim nächsten Start aus seiner Sicherung neu. Neu im Schnappschuss sind die Gesetze der Spielfigur (`spieler.gesetze`), je Titel `landlos` und im Block `datei` die Version des Lesers (`leser`); neu in der Chronik die Arten `gesetz` und `sitz`.
+- `scripts/monitor_daten.py`: `gesetze`, `landlos` und `leser` stehen in den Erlaubnislisten, die Tests decken sie ab. Chronikzeilen jeder Art gingen schon bisher durch. Am Abend lagen die neuen Felder im Monitor noch nicht vor; geprüft ist an erfundenen Daten, an der echten Welt erst nach dem Neuaufbau.
+- `docs/MONITOR.md`: Abschnitt „Neuaufbau im Monitor“. Die Nummern der Aufnahmen bleiben, die `id` einer Chronikzeile nicht unbedingt; Register und Kapitel verweisen nie auf sie.
+- Hochgeladen auf Freigabe („Ja, hochladen“) mit dem Commit, der diesen Eintrag enthält.
+
 ## 2026-11-17 – Erster Push (Claude)
 
 - Der Spieler hat Vorschau und Stand gesehen und freigegeben („Ja, hochladen“). Hochgeladen: `afde4c9`, 59 Dateien, das Gerüst mit dem Dossier der ersten Spielfigur.
