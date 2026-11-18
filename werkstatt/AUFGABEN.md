@@ -4,11 +4,12 @@ Wer etwas anfängt, trägt sich unter „In Arbeit“ ein (wer, seit wann, welch
 
 ## In Arbeit
 
-Noch nichts.
+- **Leser 4 in Erlaubnislisten und Faktenblatt, Kapitel II** (Claude, seit 18.11.2026): `scripts/monitor_daten.py`, `scripts/fakten.py`, `scripts/test-monitor-daten.py`, `werkstatt/erster-lauf/fakten/kapitel-2.md`, danach `chronik.html`, `events.json`, `meta.json`. Die Erlaubnislisten und das erweiterte Faktenblatt sind online; offen sind eigene Tests, die Doku und das Kapitel selbst. Wie weit es ist, steht oben in `erster-lauf/STAND.md`.
 
 ## Zur Prüfung
 
 - **Kapitel I „Die Reise nach Frankfurt“** (Claude, 17.11.2026): Erstes Buch, Spieldatum 1.1.867 bis 2.4.867, vom Spieler in der Vorschau bestätigt („Passt so“) und freigegeben („Ja, hochladen“), online seit dem 17.11.2026. Prüfen: Zahlen und Spieldaten in Bericht, Randnotiz und Register gegen `erster-lauf/fakten/kapitel-1.md`; das Tagebuch gegen `docs/SCHREIBSTIL.md` und gegen das, was `erster-lauf/STAND.md` als erzählt und als offen führt.
+- **Berichtigung von Kapitel I: die Reise nach Würzburg** (Claude, 18.11.2026): vom Spieler beauftragt („Ja, nachtragen“), zur Heirat nur der Tag („Nur den Tag nennen“), freigegeben („Ja, hochladen“), online seit dem 18.11.2026. Prüfen: die Einträge ab dem 5. Februar, die neuen Absätze im Bericht und die Registereinträge `-0010` bis `-0016` gegen den Abschnitt „Aufenthalt, Reise, Aufträge und Hof je Aufnahme“ im Faktenblatt und gegen das Beiblatt.
 - **Gerüst der CK3-Chronik mit der ersten Spielfigur** (Claude, 17.11.2026): Portal, Seite des ersten Laufs mit Titelblatt, Dossier von Joshua von Silberfurt im Wortlaut, Steckbrief und leerem Kapitelteil, Erscheinungsbild „Handschrift“ mit Schriften und Ornamenten, Musterblatt, Prüfskripte und GitHub-Prüfung, Hochlade-Skript mit Datenschutzfilter und Tests, Werkstatt und Doku. Die Weltkennung ist eingetragen. Online seit `afde4c9`. Prüfen: Wortlaut des Dossiers gegen `lore/`, Erlaubnislisten in `scripts/monitor_daten.py` gegen die Ablage des Monitors, Erscheinungsbild in Firefox und Safari (bisher nur in Chrome angesehen).
 
 ## Offen

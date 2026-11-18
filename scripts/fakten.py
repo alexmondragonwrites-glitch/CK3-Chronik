@@ -36,7 +36,11 @@ LEER = "—"
 ZIFFERN = ("", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X")
 # Bezüge, die eine Figur zu den Menschen um die Spielfigur machen (so nennt sie der Monitor)
 UMFELD = ("ehepartner", "früherer ehepartner", "kind", "eltern", "geschwister", "haus", "lehnsherr", "erbe", "verbündeter",
-          "vasall", "kerkermeister", "ehepartner im haus", "kind im haus")
+          "vasall", "kerkermeister", "ehepartner im haus", "kind im haus",
+          # seit Leser 4 des Monitors
+          "hof", "begleitung", "auftrag", "ortsherr", "am ort", "gastgeber", "gast", "umfeld")
+STATUS = {"accepted": "angenommen", "available": "verfügbar"}
+ZUSTAND = {"paused": "ruht (im Spiel „paused“)", "transit": "unterwegs (im Spiel „transit“)"}
 WERTE = (("gold", "Gold"), ("einkommen", "Einkommen pro Monat"), ("prestige", "Prestige"), ("prestige_gesamt", "Prestige gesamt"),
          ("froemmigkeit", "Frömmigkeit"), ("froemmigkeit_gesamt", "Frömmigkeit gesamt"), ("einfluss", "Einfluss"),
          ("stress", "Stress"), ("gesundheit", "Gesundheit"), ("schrecken", "Schrecken"), ("legitimitaet", "Legitimität"),
@@ -132,15 +136,139 @@ def figur_text(fid, a: dict, ausfuehrlich: bool = False) -> str:
         teile.append(f"Titel: {f['titel_name']} ({f.get('titel_stufe') or 'ohne Stufenname'})")
     if f.get("eltern"):
         teile.append("Eltern im Blick: " + ", ".join(figur_text(e, a) for e in f["eltern"]))
+    if f.get("eigenschaften"):
+        teile.append("Eigenschaften: " + ", ".join(f["eigenschaften"]))
     return text + (", " + ", ".join(teile) if teile else "")
 
 
-def sitz_text(a: dict) -> str:
-    sitz = (a.get("spieler") or {}).get("sitz")
-    if not isinstance(sitz, dict):
+def ort_text(ort, a: dict, mit_herr: bool = False) -> str:
+    """Ort eines Sitzes, Aufenthalts, Auftrags oder Reiseziels: Name, Grafschaft und auf Wunsch der Herr des Ortes."""
+    if not isinstance(ort, dict):
         return LEER
-    grafschaft = (a.get("titel") or {}).get(str(sitz.get("grafschaft")))
-    return (sitz.get("ort") or LEER) + (f" ({grafschaft.get('stufe') or 'Titel'} {grafschaft.get('name')})" if grafschaft else "")
+    grafschaft = (a.get("titel") or {}).get(str(ort.get("grafschaft")))
+    text = (ort.get("ort") or LEER) + (f" ({grafschaft.get('stufe') or 'Titel'} {grafschaft.get('name')})" if grafschaft else "")
+    if mit_herr and ort.get("herr") is not None:
+        text += f", Herr des Ortes: {figur_text(ort['herr'], a)}"
+    return text
+
+
+def sitz_text(a: dict) -> str:
+    return ort_text((a.get("spieler") or {}).get("sitz"), a)
+
+
+def reise_text(a: dict) -> str:
+    """Reiseplan der Spielfigur am Tag der Aufnahme: Abreise, Ziele mit Ankunft und geplantem Tag, Weg, Auftrag, Mitreisende."""
+    sp = a.get("spieler") or {}
+    r = sp.get("reise")
+    if not isinstance(r, dict):
+        return "keine"
+    teile = [f"Abreise {datum(r.get('abreise'))} von {ort_text(r.get('von'), a)}"]
+    for ziel in r.get("ziele") or []:
+        tage = [f"Ankunft {datum(ziel['ankunft'])}" if ziel.get("ankunft") else None,
+                f"geplant {datum(ziel['geplant'])}" if ziel.get("geplant") else None]
+        teile.append(f"nach {ort_text(ziel.get('ort'), a)} ({', '.join(t for t in tage if t) or 'ohne Tag'})")
+    if r.get("weg"):
+        teile.append("Weg laut Plan: " + ", ".join(w.get("ort") or "?" for w in r["weg"] if isinstance(w, dict)))
+    if r.get("zustand"):
+        teile.append("die Reise " + ZUSTAND.get(r["zustand"], f"im Zustand „{r['zustand']}“"))
+    auftrag = next((x for x in sp.get("auftraege") or [] if x.get("id") == r.get("auftrag")), None)
+    if auftrag:
+        teile.append(f"Auftrag „{auftrag.get('name')}“" + (f" bei {figur_text(r['bei'], a)}" if r.get("bei") is not None else ""))
+    mit = []
+    for m in r.get("mitreisende") or []:
+        if isinstance(m, dict):
+            seit = f" seit {datum(m['seit'])}" if m.get("seit") else ""
+            wo = f" ab {ort_text(m['ort'], a)}" if isinstance(m.get("ort"), dict) else ""
+            mit.append(figur_text(m.get("figur"), a) + seit + wo)
+        else:
+            mit.append(figur_text(m, a))
+    teile.append("Mitreisende: " + (", ".join(mit) or "keine"))
+    if r.get("partner") is not None:
+        teile.append(f"Partner {figur_text(r['partner'], a)}" + (", laut Spiel verhindert" if r.get("partner_verhindert") else ""))
+    return "; ".join(teile)
+
+
+def auftraege_zeilen(a: dict) -> list[str]:
+    """Aufträge der Spielfigur am Tag der Aufnahme, einer je Zeile."""
+    zeilen = []
+    for x in (a.get("spieler") or {}).get("auftraege") or []:
+        teile = [f"„{x.get('name')}“ in {ort_text(x.get('ort'), a)}",
+                 STATUS.get(x.get("status"), x.get("status") or LEER) + (f" am {datum(x['angenommen'])}" if x.get("angenommen") else "")]
+        if x.get("von") is not None:
+            teile.append(f"gestellt von {figur_text(x['von'], a)}")
+        if x.get("bei") is not None:
+            teile.append(f"bei {figur_text(x['bei'], a)}")
+        if x.get("partner") is not None:
+            teile.append(f"Partner {figur_text(x['partner'], a)}")
+        zeilen.append(", ".join(teile))
+    return zeilen
+
+
+def hof_text(a: dict) -> str:
+    """Wer zum Hof der Spielfigur gehört, seit wann und mit welchen Ämtern."""
+    hof = (a.get("spieler") or {}).get("hof")
+    if not isinstance(hof, list):
+        return LEER
+    return "; ".join(figur_text(h.get("figur"), a) + f" (seit {datum(h.get('seit'))}" + (", " + ", ".join(h["aemter"]) if h.get("aemter") else "") + ")"
+                     for h in hof if isinstance(h, dict)) or "niemand"
+
+
+def am_ort_text(a: dict) -> str:
+    """Titelträger, die der Spielstand am Tag der Aufnahme an denselben Ort setzt; die übrigen nur gezählt."""
+    o = (a.get("spieler") or {}).get("am_ort")
+    if not isinstance(o, dict):
+        return LEER
+    namen = [figur_text(f, a, ausfuehrlich=True) for f in o.get("herrscher") or []]
+    weitere = o.get("weitere")
+    if isinstance(weitere, int) and weitere:
+        namen.append(("dazu " if namen else "") + (f"{weitere} weitere Menschen" if weitere != 1 else "ein weiterer Mensch"))
+    return "; ".join(namen) or "niemand"
+
+
+def unterwegs_abschnitt(reihe: list[dict]) -> list[str]:
+    """Aufenthalt, Reise, wer am selben Ort ist, Aufträge und Hof für jede Aufnahme des Blatts."""
+    if not any(feld in (a.get("spieler") or {}) for a in reihe for feld in ("aufenthalt", "reise", "am_ort", "auftraege", "hof")):
+        return []
+    z = ["## Aufenthalt, Reise, Aufträge und Hof je Aufnahme", "",
+         "Stand am Tag der Aufnahme. „Am selben Ort“ belegt den gemeinsamen Ort an diesem Tag, keine Begegnung.", ""]
+    for a in reihe:
+        sp = a.get("spieler") or {}
+        auftraege = auftraege_zeilen(a)
+        z += [f"### Nr. {a.get('nr')} · {datum(a.get('spieldatum'))}", "",
+              f"- **Aufenthalt:** {ort_text(sp.get('aufenthalt'), a, mit_herr=True)}",
+              f"- **Reise:** {reise_text(a)}",
+              f"- **Am selben Ort:** {am_ort_text(a)}",
+              "- **Aufträge:**" + ("" if auftraege else " keine")]
+        z += [f"  - {zeile}" for zeile in auftraege]
+        z += [f"- **Hof:** {hof_text(a)}", ""]
+    return z
+
+
+def unternehmungen_abschnitt(reihe: list[dict]) -> list[str]:
+    """Unternehmungen (etwa ein Festmahl) aus den Aufnahmen des Blatts; je Unternehmung der jüngste Stand mit Protokoll."""
+    juengste: dict = {}
+    for a in reihe:
+        for u in a.get("unternehmungen") or []:
+            juengste[u.get("id") or (u.get("art"), u.get("angelegt"))] = (u, a)
+    if not juengste:
+        return []
+    z = ["## Unternehmungen", "",
+         "Eine Unternehmung steht nur im Spielstand, solange sie läuft. Das Protokoll gibt den Wortlaut des Spiels wieder.", ""]
+    for u, a in juengste.values():
+        gaeste = u.get("gaeste") or []
+        z += [f"### {u.get('name') or u.get('art')} · Stand der Aufnahme Nr. {a.get('nr')} vom {datum(a.get('spieldatum'))}", "",
+              f"- **Gastgeber:** {figur_text(u.get('gastgeber'), a)}",
+              f"- **Ort:** {ort_text(u.get('ort'), a, mit_herr=True)}",
+              f"- **Angelegt:** {datum(u.get('angelegt'))}; **Beginn:** {datum(u.get('beginn'))}; **Kosten:** {zahl(u.get('kosten'))}",
+              f"- **Abschnitte:** {', '.join(str(x) for x in u.get('abschnitte') or []) or LEER}",
+              f"- **Gäste ({len(gaeste)}):** {', '.join(figur_text(g, a) for g in gaeste) or 'keine'}"]
+        for p in u.get("protokoll") or []:
+            wer = figur_text(p.get("figur"), a) if p.get("figur") is not None else LEER
+            ziel = f" → {figur_text(p['ziel'], a)}" if p.get("ziel") is not None else ""
+            wirkung = f" Wirkung: {p['wirkung']}" if p.get("wirkung") else ""
+            z.append(f"- {datum(p.get('datum'))} · {wer}{ziel} · **{p.get('titel') or LEER}:** {p.get('text') or ''}{wirkung}".rstrip())
+        z.append("")
+    return z
 
 
 def gesetze(a: dict) -> dict[str, str]:
@@ -286,6 +414,11 @@ def blatt(welt: md.Welt, lauf: str, kapitel: int, von: str | None, bis: str, bei
     ]
     if any((a.get("spieler") or {}).get(feld) for a in (anfang, stich) for feld in ("lehnsherr_seit", "lehnsherr_vertrag")):
         lage.insert([name for name, _ in lage].index("Lehnsherr oder Gönner") + 1, ("Vertrag mit Lehnsherr oder Gönner", vertrag))
+    if any("aufenthalt" in (a.get("spieler") or {}) for a in (anfang, stich)):
+        lage.insert([name for name, _ in lage].index("Sitz") + 1,
+                    ("Aufenthalt am Tag der Aufnahme", lambda a: ort_text((a.get("spieler") or {}).get("aufenthalt"), a, mit_herr=True)))
+    if any("hof" in (a.get("spieler") or {}) for a in (anfang, stich)):
+        lage.insert([name for name, _ in lage].index("Vasallen"), ("Hof", hof_text))
     z += tabelle(["Angabe", kopf_a, kopf_s, "Vergleich"],
                  [[name, wert(anfang), wert(stich), "geändert" if wert(anfang) != wert(stich) else ""] for name, wert in lage])
 
@@ -321,9 +454,11 @@ def blatt(welt: md.Welt, lauf: str, kapitel: int, von: str | None, bis: str, bei
 
     z += ["## Kennzahlen je Aufnahme", ""]
     namen = dict(WERTE)
+    reihe = ([anfang] if anfang["nr"] not in nummern else []) + aufnahmen
     z += tabelle(["Nr.", "Spieldatum"] + [namen[k] for k in KURVE],
                  [[a.get("nr"), datum(a.get("spieldatum"))] + [zahl((a.get("spieler") or {}).get(k)) for k in KURVE]
-                  for a in ([anfang] if anfang["nr"] not in nummern else []) + aufnahmen])
+                  for a in reihe])
+    z += unterwegs_abschnitt(reihe)
 
     z += ["## Menschen um die Spielfigur am Stichtag", ""]
     spielfigur = ss.get("figur")
@@ -333,7 +468,9 @@ def blatt(welt: md.Welt, lauf: str, kapitel: int, von: str | None, bis: str, bei
         worte = {"ehepartner": "Ehepartner", "früherer ehepartner": "Früherer Ehepartner", "kind": "Kind", "eltern": "Elternteil",
                  "geschwister": "Geschwister", "haus": "Hausmitglied", "lehnsherr": (a.get("spieler") or {}).get("lehnsherr_art") or "Lehnsherr",
                  "erbe": "Erbe", "verbündeter": "Verbündeter", "vasall": "Vasall", "kerkermeister": "Kerkermeister",
-                 "ehepartner im haus": "Ehepartner im Haus", "kind im haus": "Kind im Haus"}
+                 "ehepartner im haus": "Ehepartner im Haus", "kind im haus": "Kind im Haus",
+                 "hof": "Hof", "begleitung": "Mitreisend", "auftrag": "Auftrag", "ortsherr": "Herr des Aufenthaltsorts",
+                 "am ort": "Am selben Ort", "gastgeber": "Gastgeber", "gast": "Gast", "umfeld": "Umfeld des Sitzes"}
         eigene = set(f.get("bezug") or [])
         if "ehepartner" in eigene:                      # die eigene Ehe steht schon da
             eigene.discard("ehepartner im haus")
@@ -360,6 +497,13 @@ def blatt(welt: md.Welt, lauf: str, kapitel: int, von: str | None, bis: str, bei
           f"- **Dynastie:** {dyn_s.get('name') or LEER}, Oberhaupt {figur_text(dyn_s.get('oberhaupt'), stich)}, {mitglieder(dyn_s.get('mitglieder_lebend'))}, "
           f"Häuser: {', '.join(h.get('name') or str(h.get('id')) for h in dyn_s.get('haeuser') or []) or LEER}", ""]
 
+    umfeld_s = stich.get("umfeld")
+    if isinstance(umfeld_s, dict):
+        z += ["## Umfeld des Sitzes am Stichtag", "",
+              f"- **Grafschaft des Sitzes:** {titel_text(umfeld_s.get('grafschaft'), stich)}",
+              "- **Kette der Herren:** " + (" → ".join(figur_text(f, stich, ausfuehrlich=True) for f in umfeld_s.get("kette") or []) or LEER),
+              "- **De jure:** " + (" → ".join(titel_text(t, stich) for t in umfeld_s.get("de_jure") or []) or LEER), ""]
+
     kriege = [k for a in aufnahmen for k in a.get("kriege") or [] if k.get("spieler_seite")]
     waffenruhe = ss.get("waffenstillstaende") or []
     z += ["## Kriege und Waffenstillstände der Spielfigur", ""]
@@ -373,7 +517,16 @@ def blatt(welt: md.Welt, lauf: str, kapitel: int, von: str | None, bis: str, bei
         z.append(f"- **Waffenstillstand** mit {figur_text(w.get('mit'), stich)} bis {datum(w.get('bis'))}, nach „{w.get('krieg') or LEER}“, Ergebnis: {w.get('ergebnis') or LEER}")
     if not kriege and not waffenruhe:
         z.append("- Keine im Zeitraum.")
+    im_umfeld: dict = {}
+    for a in aufnahmen:
+        for k in a.get("kriege") or []:
+            if k.get("umfeld") and not k.get("spieler_seite"):
+                im_umfeld[k.get("id")] = (k, a)
+    for k, a in im_umfeld.values():
+        z.append(f"- **Krieg im Umfeld des Sitzes:** {k.get('name') or LEER}, seit {datum(k.get('beginn'))}, Kriegsgrund: {k.get('kriegsgrund') or LEER}; "
+                 f"Angreifer {figur_text(k.get('hauptangreifer'), a)}, Verteidiger {figur_text(k.get('hauptverteidiger'), a)}")
     z.append("")
+    z += unternehmungen_abschnitt(reihe)
 
     eintraege = [md.chronik_eintrag(e) for e in welt.chronik
                  if e.get("art") != "neuladen" and not e.get("verworfen") and e.get("nr") in nummern]

@@ -135,13 +135,24 @@ SPIELER_FELDER = (
     # seit Leser 3 des Monitors: seit wann das Haus des Lehnsherrn oder Gönners den Vertrag hält (bei einem neuen
     # Vorgesetzten der Tag, an dem er begann) und die Art des Vertrags, wie das Spiel sie nennt
     "lehnsherr_seit", "lehnsherr_vertrag",
+    # seit Leser 4 des Monitors: wo die Spielfigur am Tag der Aufnahme ist, ihr Reiseplan (Abreise, Ziele mit
+    # Ankunft und geplantem Tag, Weg, Mitreisende, Auftrag), wer am selben Ort ist, ihre Aufträge mit Status und ihr
+    # Hof mit Ämtern. Alles Spielinhalt; die Bestandteile gehen so durch, wie der Monitor sie führt.
+    "aufenthalt", "reise", "am_ort", "auftraege", "hof",
 )
 FIGUR_FELDER = ("id", "name", "beiname", "weiblich", "geburt", "haus", "haus_name", "lebend", "tod", "todesursache",
                 "ehepartner", "fruehere_ehepartner", "kinder", "verlobt", "eltern", "titel", "titel_name", "titel_stufe",
-                "bezug")
-TITEL_FELDER = ("id", "key", "name", "stufe", "art", "landlos", "rang", "inhaber", "seit", "lehnsherr_titel", "de_jure_titel")
+                "bezug", "eigenschaften")
+TITEL_FELDER = ("id", "key", "name", "stufe", "art", "landlos", "rang", "inhaber", "seit", "lehnsherr_titel", "de_jure_titel",
+                "erwerb")
 KRIEG_FELDER = ("id", "name", "beginn", "angreifer", "verteidiger", "hauptangreifer", "hauptverteidiger", "kriegsgrund",
-                "ziele", "anspruchsteller", "spieler_seite")
+                "ziele", "anspruchsteller", "spieler_seite", "umfeld")
+# Seit Leser 4: Unternehmungen (etwa ein Festmahl) mit Gastgeber, Gästen, Ort, Kosten und dem Protokoll des Spiels,
+# dazu das Umfeld des Sitzes (Grafschaft, Kette der Herren, De-jure-Titel).
+UNTERNEHMUNG_FELDER = ("id", "art", "name", "gastgeber", "gaeste", "ort", "angelegt", "beginn", "aktiv", "abgeschlossen",
+                       "kosten", "abschnitte", "protokoll")
+PROTOKOLL_FELDER = ("datum", "figur", "ziel", "titel", "text", "wirkung")
+UMFELD_FELDER = ("grafschaft", "kette", "de_jure")
 ERINNERUNG_FELDER = ("id", "art", "datum", "figur", "beteiligte", "titel", "grund")
 HAUS_FELDER = ("id", "name", "oberhaupt", "gegruendet", "mitglieder_lebend", "einigkeit")
 DYNASTIE_FELDER = ("id", "name", "oberhaupt", "ruhm", "ruhm_gesamt", "mitglieder_lebend", "haeuser")
@@ -157,7 +168,7 @@ BEKANNT_OHNE_VEROEFFENTLICHUNG = {
     "kampagne": {"spielername"},
 }
 SNAPSHOT_FELDER = ("welt_id", "spieldatum", "spielversion", "start", "kampagne", "hinweise", "spieler", "figuren",
-                   "titel", "kriege", "erinnerungen", "haus", "dynastie", "versionspruefung")
+                   "titel", "kriege", "erinnerungen", "haus", "dynastie", "versionspruefung", "unternehmungen", "umfeld")
 KAMPAGNE_FELDER = ("spielzeit_s", "erfolge_moeglich")
 
 # Kennzahlen des Verlaufs: Schlüssel → Beschriftung. „Fehlt“ ist nicht 0: Ein fehlender Wert bleibt null.
@@ -197,7 +208,20 @@ def unbekannte_felder(aufnahme_roh: dict) -> set[str]:
             neu |= {f"{teil}.{f}" for f in set(eintrag) - set(felder)}
     for haus in (snap.get("dynastie") or {}).get("haeuser") or []:
         neu |= {f"dynastie.haeuser.{f}" for f in set(haus) - set(DYNASTIE_HAUS_FELDER)}
+    for unternehmung in snap.get("unternehmungen") or []:
+        neu |= {f"unternehmungen.{f}" for f in set(unternehmung) - set(UNTERNEHMUNG_FELDER)}
+        for zeile in unternehmung.get("protokoll") or []:
+            neu |= {f"unternehmungen.protokoll.{f}" for f in set(zeile) - set(PROTOKOLL_FELDER)}
+    neu |= {f"umfeld.{f}" for f in set(snap.get("umfeld") or {}) - set(UMFELD_FELDER)}
     return neu
+
+
+def unternehmung(roh: dict) -> dict:
+    """Eine Unternehmung mit ihrem Protokoll, nur mit den genannten Feldern."""
+    out = _auswahl(roh, UNTERNEHMUNG_FELDER)
+    if isinstance(out.get("protokoll"), list):
+        out["protokoll"] = [_auswahl(zeile, PROTOKOLL_FELDER) for zeile in out["protokoll"]]
+    return out
 
 
 def lesung(aufnahme_roh: dict) -> dict:
@@ -238,6 +262,11 @@ def aufnahme(aufnahme_roh: dict) -> dict:
         "figuren": {str(k): _ohne_leeres(_auswahl(f, FIGUR_FELDER)) for k, f in (snap.get("figuren") or {}).items()},
         "titel": {str(k): _ohne_leeres(_auswahl(t, TITEL_FELDER)) for k, t in (snap.get("titel") or {}).items()},
     }
+    # Seit Leser 4; ältere Aufnahmen kennen diese Blöcke nicht und bleiben, wie sie waren
+    if "unternehmungen" in snap:
+        out["unternehmungen"] = [unternehmung(u) for u in snap.get("unternehmungen") or []]
+    if "umfeld" in snap:
+        out["umfeld"] = _auswahl(snap.get("umfeld"), UMFELD_FELDER) if snap.get("umfeld") else None
     return out
 
 
@@ -426,7 +455,7 @@ def bauen(welt: Welt) -> tuple[dict[str, bytes], dict]:
         "chronik.json": json_bytes({"schema": SCHEMA, "world_id": welt.welt_id, "eintraege": chronik}, je_zeile=("eintraege",)),
     }
     for a in gueltig:
-        dateien[aufnahme_datei(a)] = json_bytes(aufnahme(a), je_zeile=("figuren", "titel", "kriege", "erinnerungen"))
+        dateien[aufnahme_datei(a)] = json_bytes(aufnahme(a), je_zeile=("figuren", "titel", "kriege", "erinnerungen", "unternehmungen"))
     return dateien, idx
 
 

@@ -97,5 +97,82 @@
     "title": "Stichtag von Kapitel I.",
     "description": "Sitz Frankfurt, Gönner Liutbert, verheiratet mit Cothilda (Wartenberg), verbündet mit Nikolaus (Wartenberg), Erbe Udalrich. In der Kasse 32,74 Gold, Einkommen 1,24 im Monat, Prestige 25,48, Frömmigkeit 63,68, Stress 10.",
     "source": "Q5"
+  },
+  {
+    "id": "erster-lauf-0010",
+    "spieldatum": "0867-01-01",
+    "recorded": "2026-11-17",
+    "kind": "fakt",
+    "category": "hof",
+    "chapter": 1,
+    "title": "Hof und Ort am Beginn.",
+    "description": "Zum Hof gehören Udalrich und Walpurga. Am selben Ort in Ulm führt der Spielstand Nikolaus (Wartenberg), der die Wartenberg-Gesellschaft führt.",
+    "source": "Q8"
+  },
+  {
+    "id": "erster-lauf-0011",
+    "spieldatum": "0867-01-24",
+    "recorded": "2026-11-17",
+    "kind": "fakt",
+    "category": "auftrag",
+    "chapter": 1,
+    "title": "Auftrag „Warenlage kennenlernen“ angenommen.",
+    "description": "In Frankfurt. Gestellt von Udalrich; als Partnerin ist Walpurga eingetragen.",
+    "source": "Q8"
+  },
+  {
+    "id": "erster-lauf-0012",
+    "spieldatum": "0867-02-05",
+    "recorded": "2026-11-17",
+    "kind": "fakt",
+    "category": "auftrag",
+    "chapter": 1,
+    "title": "Auftrag „Zollaushandlung“ angenommen.",
+    "description": "In Würzburg, bei Ludwig dem Jüngeren (Karling). Gestellt von Udalrich; die Partnerin Walpurga führt das Spiel für diesen Auftrag als verhindert.",
+    "source": "Q8"
+  },
+  {
+    "id": "erster-lauf-0013",
+    "spieldatum": "0867-02-05",
+    "recorded": "2026-11-17",
+    "kind": "fakt",
+    "category": "reise",
+    "chapter": 1,
+    "title": "Abreise von Frankfurt nach Würzburg.",
+    "description": "Weg laut Reiseplan: Hanau, Gelnhausen, Hochberg, Würzburg; der Rückweg nach Frankfurt ist geplant. Mitreisende nennt der Reiseplan keine.",
+    "source": "Q8"
+  },
+  {
+    "id": "erster-lauf-0014",
+    "spieldatum": "0867-02-16",
+    "recorded": "2026-11-17",
+    "kind": "rekonstruktion",
+    "category": "reise",
+    "chapter": 1,
+    "title": "Am Tag der Heirat unterwegs.",
+    "description": "Abgeleitet aus dem Reiseplan: Die Heirat am 16.2.867 liegt zwischen der Abreise aus Frankfurt am 5.2. und der Ankunft in Würzburg am 17.2.867. Seit dem 16.2.867 gehört Cothilda zu Joshuas Hof. Wo und wie die Ehe geschlossen wurde, zeigt der Spielstand nicht.",
+    "source": "Q8"
+  },
+  {
+    "id": "erster-lauf-0015",
+    "spieldatum": "0867-02-17",
+    "recorded": "2026-11-17",
+    "kind": "fakt",
+    "category": "reise",
+    "chapter": 1,
+    "title": "Ankunft in Würzburg.",
+    "description": "Geplant war der 18.2.867. Herr des Ortes ist Ludwig der Jüngere (Karling).",
+    "source": "Q8"
+  },
+  {
+    "id": "erster-lauf-0016",
+    "spieldatum": "0867-04-02",
+    "recorded": "2026-11-17",
+    "kind": "fakt",
+    "category": "aufenthalt",
+    "chapter": 1,
+    "title": "Am Stichtag in Würzburg.",
+    "description": "Joshua hält sich in Würzburg auf; die Reise ruht, die Rückkehr nach Frankfurt ist für den 17.4.867 geplant. Am selben Ort: Yefet (Ben Asher), der die Ben Asher-Gesellschaft führt. Cothilda (Amt Leibarzt) und Walpurga (Amt Partner) sind in Frankfurt, Udalrich ist auf eigener Reise in Ulm.",
+    "source": "Q8"
   }
 ]

@@ -1,5 +1,17 @@
 # Werkstatt-Log
 
+## 2026-11-18 – Kapitel I berichtigt: die Reise nach Würzburg (Claude)
+
+- Anlass: Der Monitor liest seit dem 18.11.2026 Aufenthalt, Reise, Aufträge und Hof (Leser 4). Danach brach Joshua am 5.2.867 von Frankfurt nach Würzburg auf, war am Tag der Heirat unterwegs und hielt sich am Stichtag in Würzburg auf; Cothilda war in Frankfurt. Die erste Fassung erzählte die Einträge vom 16. Februar, 12. März und 2. April in Frankfurt. Der Spieler hat in der Hauptsitzung entschieden: „Ja, nachtragen“.
+- **Tagebuch:** Die drei Einträge sind nach dem Spielstand umgeschrieben (unterwegs am 16. Februar, Würzburg am 12. März und am 2. April), zwei sind neu (Frankfurt am 5. Februar, Würzburg am 17. Februar). Die sechs Einträge bis zum 3. Februar sind unverändert. Zur Heirat steht nur der Tag; wo und wie sie geschah, sagt kein Spielstand, die Frage liegt beim Spieler.
+- **Bericht:** neue Kennzahl Würzburg, in der Zeitachse der 24.1., der 30.1. (statt des Zeitraums), der 5.2. und der 17.2.867, zwei neue Absätze zu Aufträgen, Reise und Hof, ein Satz zur Heirat unterwegs, die Randnotiz um die Dauer der Reise ergänzt. „Haus und Titel“ nennt Aufenthalt, Aufträge und Hof. Neue Quelle Q8, unter „Korrekturen“ der erste Eintrag mit Verweis auf die Fassung vom 17.11.2026 (`574162b`).
+- **Register:** sieben Einträge angehängt (`erster-lauf-0010` bis `-0016`), keiner geändert.
+- **Faktenblatt:** Das Beiblatt führt Hof, Aufträge, Reise, was daraus abgeleitet ist und was der Spielstand nicht sagt. Seit dem Neustart des Monitors stehen die Angaben auch in den Aufnahmen Nr. 1 und Nr. 2; ich habe sie dort gegengelesen.
+- **Leser 4 in den Skripten:** `scripts/monitor_daten.py` kennt die neuen Felder (Aufenthalt, Reise, „am selben Ort“, Aufträge, Hof, Eigenschaften der Figuren, Erwerb von Titeln, Kriege im Umfeld, Unternehmungen mit Protokoll, Umfeld des Sitzes). `scripts/fakten.py` zeigt sie im Faktenblatt: Aufenthalt und Hof im Vergleich von Anfang und Stichtag, je Aufnahme Aufenthalt, Reise, „am selben Ort“, Aufträge und Hof, dazu das Umfeld des Sitzes und Unternehmungen. Die 22 vorhandenen Tests laufen; eigene Tests für die neuen Felder und die Doku folgen mit Kapitel II.
+- **Heirat am 16.2.867:** Der Spieler auf die Frage, wie das Tagebuch sie erzählt: „Nur den Tag nennen“.
+- **Geprüft:** alle Schritte der GitHub-Prüfung lokal, dazu `privat-pruefen.py`; Vorschau des Kapitels und der Korrekturen in Chrome, 1440 Pixel hell und als Handy dunkel, ohne Überbreite, fremde Anfragen oder Fehler.
+- Hochgeladen auf Freigabe des Spielers („Ja, hochladen“) mit dem Commit, der diesen Eintrag enthält. Nicht dabei: Aufnahmen des Monitors und das Faktenblatt zu Kapitel II.
+
 ## 2026-11-17 – Kapitel I „Die Reise nach Frankfurt“ geschrieben (Claude)
 
 - Auftrag der Hauptsitzung am Abend, nach drei Meldungen: Der Spieler hat den Grund für den Gesellschaftszweck bestätigt („Ja, passt“) und die Werte im Spiel verglichen („Ja, stimmen“); Kapitel I schreiben. Die Hauptsitzung reichte auch die Bitte des Spielers weiter, es auf die Seite zu bringen; darauf habe ich nicht hochgeladen, weil er das Kapitel da noch nicht gesehen hatte. Er hat es dann in der Vorschau gelesen („Passt so“) und freigegeben („Ja, hochladen“). Hochgeladen mit dem Commit, der diesen Eintrag enthält.
